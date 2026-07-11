@@ -48,7 +48,7 @@ export function Booking() {
         createdAt: serverTimestamp()
       });
 
-      const message = `Hello Woodside Serene! I would like to request a booking:\n\n*Name:* ${formData.name}\n*Stay Type:* ${stay}\n*Dates:* ${formData.checkIn} to ${formData.checkOut}\n*Guests:* ${formData.guests}\n*Phone:* ${formData.phone}\n*Email:* ${formData.email}\n\nPlease confirm availability and send the 50% advance payment details.`;
+      const message = `Hello Woodside Serene! I would like to request a booking:\n\n*Name:* ${formData.name}\n*${category === 'Event' ? 'Event' : 'Stay'} Type:* ${stay}\n*Dates:* ${formData.checkIn} to ${formData.checkOut}\n*Guests:* ${formData.guests}\n*Phone:* ${formData.phone}\n*Email:* ${formData.email}\n\nPlease confirm availability and send the 50% advance payment details.`;
       const whatsappUrl = `https://wa.me/919840741075?text=${encodeURIComponent(message)}`;
       window.open(whatsappUrl, '_blank');
 
@@ -146,10 +146,10 @@ export function Booking() {
           {step === 'form' && stay && category && (
             <div className="animate-fade-in-up">
               <Link 
-                href={`?category=${encodeURIComponent(category)}`}
+                href={category === 'Event' ? '/events' : `?category=${encodeURIComponent(category)}`}
                 className="mb-6 flex items-center gap-2 text-woodside-200 hover:text-white transition-colors uppercase text-xs font-bold tracking-widest w-fit drop-shadow-md bg-woodside-950/50 backdrop-blur-sm px-4 py-2 rounded-full"
               >
-                <ChevronLeft className="w-4 h-4" /> Back to {category}
+                <ChevronLeft className="w-4 h-4" /> Back to {category === 'Event' ? 'Events' : category}
               </Link>
               
               <div className="bg-woodside-950/80 backdrop-blur-xl rounded-3xl p-6 md:p-10 border border-white/10 shadow-2xl max-w-2xl mx-auto">
