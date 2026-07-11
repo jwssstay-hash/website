@@ -1,8 +1,6 @@
 'use client';
 
 import React, { useState, useEffect } from 'react';
-import { db } from '@/lib/firebase';
-import { collection, getDocs, addDoc, serverTimestamp, query, orderBy, deleteDoc, doc } from 'firebase/firestore';
 import { Lock, LogOut, Calendar, Users, ImagePlus, Loader2, Trash2, Image as ImageIcon } from 'lucide-react';
 import { Logo } from '@/components/ui/Logo';
 
@@ -74,6 +72,8 @@ export default function AdminPage() {
   const fetchBookings = async () => {
     setIsLoading(true);
     try {
+      const { db } = await import('@/lib/firebase');
+      const { collection, getDocs, query, orderBy } = await import('firebase/firestore');
       const q = query(collection(db, 'bookings'), orderBy('createdAt', 'desc'));
       const snapshot = await getDocs(q);
       setBookings(snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() })));
@@ -86,6 +86,8 @@ export default function AdminPage() {
   const fetchEvents = async () => {
     setIsLoading(true);
     try {
+      const { db } = await import('@/lib/firebase');
+      const { collection, getDocs, query, orderBy } = await import('firebase/firestore');
       const q = query(collection(db, 'events'), orderBy('createdAt', 'desc'));
       const snapshot = await getDocs(q);
       setEvents(snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() })));
@@ -98,6 +100,8 @@ export default function AdminPage() {
   const fetchGallery = async () => {
     setIsLoading(true);
     try {
+      const { db } = await import('@/lib/firebase');
+      const { collection, getDocs, query, orderBy } = await import('firebase/firestore');
       const q = query(collection(db, 'gallery'), orderBy('createdAt', 'desc'));
       const snapshot = await getDocs(q);
       setGallery(snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() })));
@@ -110,6 +114,8 @@ export default function AdminPage() {
   const deleteDocItem = async (collectionName: string, id: string, fetchFn: () => void) => {
     if (!confirm('Are you sure you want to delete this?')) return;
     try {
+      const { db } = await import('@/lib/firebase');
+      const { deleteDoc, doc } = await import('firebase/firestore');
       await deleteDoc(doc(db, collectionName, id));
       fetchFn();
     } catch (error) {
@@ -157,6 +163,8 @@ export default function AdminPage() {
     e.preventDefault();
     setIsSubmittingEvent(true);
     try {
+      const { db } = await import('@/lib/firebase');
+      const { collection, addDoc, serverTimestamp } = await import('firebase/firestore');
       await addDoc(collection(db, 'events'), { ...eventForm, createdAt: serverTimestamp() });
       alert('Event added successfully!');
       setEventForm({ image: '', date: '', description: '', posterPlace: '', contact: '' });
@@ -176,6 +184,8 @@ export default function AdminPage() {
     const url = await uploadToCloudinary(file);
     if (url) {
       try {
+        const { db } = await import('@/lib/firebase');
+        const { collection, addDoc, serverTimestamp } = await import('firebase/firestore');
         await addDoc(collection(db, 'gallery'), {
           src: url,
           title: galleryTitle || 'Gallery Image',

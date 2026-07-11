@@ -5,8 +5,6 @@ import { Navbar } from "@/components/ui/Navbar";
 import { Footer } from "@/components/ui/Footer";
 import { VideoBackground } from "@/components/ui/VideoBackground";
 import { CalendarX2, CalendarDays, MapPin, Phone, Loader2 } from "lucide-react";
-import { db } from '@/lib/firebase';
-import { collection, query, orderBy, getDocs } from 'firebase/firestore';
 
 export default function EventsPage() {
   const [events, setEvents] = useState<any[]>([]);
@@ -15,6 +13,9 @@ export default function EventsPage() {
   useEffect(() => {
     const fetchEvents = async () => {
       try {
+        const { db } = await import('@/lib/firebase');
+        const { collection, query, orderBy, getDocs } = await import('firebase/firestore');
+
         const q = query(collection(db, 'events'), orderBy('createdAt', 'desc'));
         const snapshot = await getDocs(q);
         const data = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));

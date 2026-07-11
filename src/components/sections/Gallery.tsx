@@ -3,8 +3,6 @@
 import React, { useEffect, useState } from 'react';
 import { ZoomIn, Loader2 } from 'lucide-react';
 import { VideoBackground } from '../ui/VideoBackground';
-import { db } from '@/lib/firebase';
-import { collection, query, orderBy, getDocs } from 'firebase/firestore';
 
 const defaultGalleryImages = [
   { src: "/Images/Family tent/family-tent-32.jpeg", title: "Family Tent", colSpan: "col-span-1 md:col-span-2", rowSpan: "row-span-2" },
@@ -74,6 +72,9 @@ export function Gallery() {
   useEffect(() => {
     const fetchCustomGallery = async () => {
       try {
+        const { db } = await import('@/lib/firebase');
+        const { collection, query, orderBy, getDocs } = await import('firebase/firestore');
+
         const q = query(collection(db, 'gallery'), orderBy('createdAt', 'desc'));
         const snapshot = await getDocs(q);
         const customImages = snapshot.docs.map(doc => ({
