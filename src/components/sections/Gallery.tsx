@@ -1,8 +1,12 @@
-import React from 'react';
-import { ZoomIn } from 'lucide-react';
-import { VideoBackground } from '../ui/VideoBackground';
+'use client';
 
-const galleryImages = [
+import React, { useEffect, useState } from 'react';
+import { ZoomIn, Loader2 } from 'lucide-react';
+import { VideoBackground } from '../ui/VideoBackground';
+import { db } from '@/lib/firebase';
+import { collection, query, orderBy, getDocs } from 'firebase/firestore';
+
+const defaultGalleryImages = [
   { src: "/Images/Family tent/family-tent-32.jpeg", title: "Family Tent", colSpan: "col-span-1 md:col-span-2", rowSpan: "row-span-2" },
   { src: "/Images/Camp Tent And Restroom/camp-tent-and-restroom-8.jpeg", title: "Camp Tent And Restroom", colSpan: "col-span-1", rowSpan: "row-span-1" },
   { src: "/Images/Glass Room/glass-house-group-stay-54.jpeg", title: "Glass Room", colSpan: "col-span-1", rowSpan: "row-span-1" },
@@ -64,6 +68,32 @@ const galleryImages = [
 ];
 
 export function Gallery() {
+  const [galleryImages, setGalleryImages] = useState<any[]>(defaultGalleryImages);
+  const [isLoading, setIsLoading] = useState(true);
+
+  useEffect(() => {
+    const fetchCustomGallery = async () => {
+      try {
+        const q = query(collection(db, 'gallery'), orderBy('createdAt', 'desc'));
+        const snapshot = await getDocs(q);
+        const customImages = snapshot.docs.map(doc => ({
+          src: doc.data().src,
+          title: doc.data().title || 'Gallery Image',
+          colSpan: doc.data().colSpan || 'col-span-1',
+          rowSpan: doc.data().rowSpan || 'row-span-1'
+        }));
+        
+        // Prepend new custom images to the hardcoded default ones
+        setGalleryImages([...customImages, ...defaultGalleryImages]);
+      } catch (error) {
+        console.error("Error fetching custom gallery images", error);
+      }
+      setIsLoading(false);
+    };
+
+    fetchCustomGallery();
+  }, []);
+
   return (
     <section id="gallery" className="relative w-full pt-10 min-h-screen pb-24">
       <VideoBackground />
@@ -77,25 +107,31 @@ export function Gallery() {
           </p>
         </div>
 
-        <div className="grid grid-cols-2 md:grid-cols-4 gap-2 md:gap-4 auto-rows-[150px] md:auto-rows-[200px]">
-          {galleryImages.map((img, idx) => (
-            <div
-              key={idx}
-              className={`relative group rounded-xl overflow-hidden cursor-pointer shadow-lg transition-transform duration-500 hover:scale-[1.02] ${img.colSpan} ${img.rowSpan}`}
-            >
-              <img 
-                src={img.src} 
-                alt={img.title}
-                loading="lazy"
-                className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110"
-              />
-              <div className="absolute inset-0 bg-woodside-950/40 opacity-0 group-hover:opacity-100 backdrop-blur-[2px] transition-all duration-500 flex flex-col items-center justify-center">
-                <ZoomIn className="text-white mb-2" size={32} />
-                <span className="text-white font-serif text-lg tracking-wide">{img.title}</span>
+        {isLoading ? (
+          <div className="flex justify-center p-12">
+            <Loader2 className="w-12 h-12 text-woodside-300 animate-spin" />
+          </div>
+        ) : (
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-2 md:gap-4 auto-rows-[150px] md:auto-rows-[200px]">
+            {galleryImages.map((img, idx) => (
+              <div
+                key={idx}
+                className={`relative group rounded-xl overflow-hidden cursor-pointer shadow-lg transition-transform duration-500 hover:scale-[1.02] ${img.colSpan} ${img.rowSpan}`}
+              >
+                <img 
+                  src={img.src} 
+                  alt={img.title}
+                  loading="lazy"
+                  className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110"
+                />
+                <div className="absolute inset-0 bg-woodside-950/40 opacity-0 group-hover:opacity-100 backdrop-blur-[2px] transition-all duration-500 flex flex-col items-center justify-center">
+                  <ZoomIn className="text-white mb-2" size={32} />
+                  <span className="text-white font-serif text-lg tracking-wide text-center px-4">{img.title}</span>
+                </div>
               </div>
-            </div>
-          ))}
-        </div>
+            ))}
+          </div>
+        )}
       </div>
     </section>
   );
