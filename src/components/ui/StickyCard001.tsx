@@ -28,7 +28,7 @@ const StickyCardItem = ({
   return (
     <div
       ref={container}
-      className="sticky top-0 flex items-center justify-center w-full h-screen pointer-events-none"
+      className="sticky top-0 flex items-center justify-center w-full h-[75vh] md:h-[90vh] pointer-events-none"
     >
       <motion.div
         style={{
