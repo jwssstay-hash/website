@@ -3,28 +3,28 @@ import { MapPin } from 'lucide-react';
 
 const attractions = [
   {
-    name: "Beeman Falls",
-    distance: "30 Mins",
+    name: "Kolappan Lake",
+    distance: "15 Mins",
+    image: "https://images.unsplash.com/photo-1501785888041-af3ef285b470?auto=format&fit=crop&q=80",
+    desc: "A serene boating lake surrounded by misty hills."
+  },
+  {
+    name: "Bheeman Falls",
+    distance: "25 Mins",
     image: "https://images.unsplash.com/photo-1433086966358-54859d0ed716?auto=format&fit=crop&q=80",
     desc: "A breathtaking waterfall hidden deep within the forest."
   },
   {
-    name: "Kavalur Observatory",
-    distance: "25 Mins",
+    name: "Vainu Bappu Observatory",
+    distance: "35 Mins",
     image: "https://images.unsplash.com/photo-1451187580459-43490279c0fa?auto=format&fit=crop&q=80",
     desc: "Asia's largest telescope observatory. Perfect for stargazing."
   },
   {
-    name: "Amirthi Zoological Park",
-    distance: "45 Mins",
+    name: "Andiappanur Dam",
+    distance: "1 Hr 15 Mins",
     image: "https://images.unsplash.com/photo-1472396961693-142e6e269027?auto=format&fit=crop&q=80",
-    desc: "A beautiful park featuring rich flora, fauna and waterfalls."
-  },
-  {
-    name: "Komutteri Lake",
-    distance: "15 Mins",
-    image: "https://images.unsplash.com/photo-1501785888041-af3ef285b470?auto=format&fit=crop&q=80",
-    desc: "A serene boating lake surrounded by misty hills."
+    desc: "A picturesque dam offering stunning views at the foothills."
   }
 ];
 

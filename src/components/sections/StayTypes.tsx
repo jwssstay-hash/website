@@ -37,12 +37,13 @@ const stays = [
   {
     title: "Glass House",
     slug: "glass-house",
-    description: "This is an 800 sq ft room with 2 attached restrooms and dressing area.",
+    description: "This is an 800 sq ft air-conditioned room with 2 attached restrooms and dressing area.",
     image: "/Images/Glass Room/Main.jpeg",
     capacity: "Up to 10 Guests",
     price: "",
     badge: "Group Stay",
     features: [
+      "Air-conditioned (AC) room",
       "Accommodates up to 10 guests (Single cots provided)",
       "2 Attached restrooms & dressing area",
       "Complimentary South Indian veg breakfast"
