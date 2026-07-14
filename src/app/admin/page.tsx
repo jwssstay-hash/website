@@ -121,10 +121,25 @@ export default function AdminPage() {
     setIsLoading(true);
     try {
       const { db } = await import('@/lib/firebase');
-      const { collection, getDocs, query, orderBy } = await import('firebase/firestore');
+      const { collection, getDocs, query, orderBy, addDoc, serverTimestamp } = await import('firebase/firestore');
       const q = query(collection(db, 'testimonials'), orderBy('createdAt', 'desc'));
       const snapshot = await getDocs(q);
-      setStories(snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() })));
+      
+      if (snapshot.empty && !localStorage.getItem('woodside_seeded_stories')) {
+        const defaults = [
+          { name: "Rahul S.", rating: 5, text: "The Glass House is surreal! Best weekend getaway we've had in years. The views at sunrise are incredible." },
+          { name: "Priya M.", rating: 5, text: "Incredibly peaceful. The staff is so welcoming and the food is just amazing authentic South Indian." },
+          { name: "Arun K.", rating: 4, text: "Loved the family tent experience. Kids had a great time around the campfire and the morning trek." }
+        ];
+        for (const story of defaults) {
+          await addDoc(collection(db, 'testimonials'), { ...story, createdAt: serverTimestamp() });
+        }
+        localStorage.setItem('woodside_seeded_stories', 'true');
+        const newSnapshot = await getDocs(q);
+        setStories(newSnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() })));
+      } else {
+        setStories(snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() })));
+      }
     } catch (error) {
       console.error("Error fetching stories", error);
     }
@@ -221,23 +236,6 @@ export default function AdminPage() {
     setIsSubmittingStory(false);
   };
 
-  const seedDefaultStories = async () => {
-    if (!confirm('Add default stories to database?')) return;
-    setIsLoading(true);
-    try {
-      const { db } = await import('@/lib/firebase');
-      const { collection, addDoc, serverTimestamp } = await import('firebase/firestore');
-      const defaults = [
-        { name: "Rahul S.", rating: 5, text: "The Glass House is surreal! Best weekend getaway we've had in years. The views at sunrise are incredible." },
-        { name: "Priya M.", rating: 5, text: "Incredibly peaceful. The staff is so welcoming and the food is just amazing authentic South Indian." },
-        { name: "Arun K.", rating: 4, text: "Loved the family tent experience. Kids had a great time around the campfire and the morning trek." }
-      ];
-      for (const story of defaults) {
-        await addDoc(collection(db, 'testimonials'), { ...story, createdAt: serverTimestamp() });
-      }
-      fetchStories();
-    } catch (e) { console.error(e); }
-  };
 
   const handleGalleryUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
@@ -529,8 +527,7 @@ export default function AdminPage() {
                     <h3 className="font-serif text-xl border-b border-white/5 pb-4 mb-4 flex justify-between items-center">Published Stories <button onClick={fetchStories} className="text-sm font-sans bg-white/10 hover:bg-white/20 px-3 py-1.5 rounded-lg transition-colors">Refresh</button></h3>
                     {isLoading ? <div className="flex justify-center p-8"><Loader2 className="w-6 h-6 animate-spin text-woodside-400" /></div> : stories.length === 0 ? (
                       <div className="text-center p-8 text-woodside-400 text-sm flex flex-col items-center">
-                        <p className="mb-4">No stories added yet. Hardcoded fallbacks will be shown to users.</p>
-                        <button onClick={seedDefaultStories} className="bg-woodside-800 text-white px-4 py-2 rounded-lg hover:bg-woodside-700 transition-colors">Import Default Stories</button>
+                        <p className="mb-4">No stories added yet. Published stories will appear here.</p>
                       </div>
                     ) : (
                       <div className="space-y-4">
