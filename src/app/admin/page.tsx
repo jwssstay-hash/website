@@ -1,7 +1,7 @@
 'use client';
 
 import React, { useState, useEffect } from 'react';
-import { Lock, LogOut, Calendar, Users, ImagePlus, Loader2, Trash2, Image as ImageIcon } from 'lucide-react';
+import { Lock, LogOut, Calendar, Users, ImagePlus, Loader2, Trash2, Image as ImageIcon, MessageSquare } from 'lucide-react';
 import { Logo } from '@/components/ui/Logo';
 
 // Hardcoded users from request
@@ -16,19 +16,23 @@ export default function AdminPage() {
   const [loginError, setLoginError] = useState('');
   const [isClient, setIsClient] = useState(false);
 
-  // Tabs: 'bookings' | 'events' | 'gallery'
-  const [activeTab, setActiveTab] = useState<'bookings' | 'events' | 'gallery'>('bookings');
+  // Tabs: 'bookings' | 'events' | 'gallery' | 'stories'
+  const [activeTab, setActiveTab] = useState<'bookings' | 'events' | 'gallery' | 'stories'>('bookings');
 
   // Data states
   const [bookings, setBookings] = useState<any[]>([]);
   const [events, setEvents] = useState<any[]>([]);
   const [gallery, setGallery] = useState<any[]>([]);
+  const [stories, setStories] = useState<any[]>([]);
   const [isLoading, setIsLoading] = useState(false);
 
   // Form States
   const [eventForm, setEventForm] = useState({ image: '', date: '', description: '', posterPlace: '', contact: '' });
   const [isSubmittingEvent, setIsSubmittingEvent] = useState(false);
   const [isUploadingEventImage, setIsUploadingEventImage] = useState(false);
+
+  const [storyForm, setStoryForm] = useState({ name: '', rating: 5, text: '' });
+  const [isSubmittingStory, setIsSubmittingStory] = useState(false);
 
   const [galleryTitle, setGalleryTitle] = useState('');
   const [isUploadingGallery, setIsUploadingGallery] = useState(false);
@@ -47,6 +51,7 @@ export default function AdminPage() {
       if (activeTab === 'bookings') fetchBookings();
       if (activeTab === 'events') fetchEvents();
       if (activeTab === 'gallery') fetchGallery();
+      if (activeTab === 'stories') fetchStories();
     }
   }, [activeTab, isAuthenticated]);
 
@@ -107,6 +112,20 @@ export default function AdminPage() {
       setGallery(snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() })));
     } catch (error) {
       console.error("Error fetching gallery", error);
+    }
+    setIsLoading(false);
+  };
+
+  const fetchStories = async () => {
+    setIsLoading(true);
+    try {
+      const { db } = await import('@/lib/firebase');
+      const { collection, getDocs, query, orderBy } = await import('firebase/firestore');
+      const q = query(collection(db, 'testimonials'), orderBy('createdAt', 'desc'));
+      const snapshot = await getDocs(q);
+      setStories(snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() })));
+    } catch (error) {
+      console.error("Error fetching stories", error);
     }
     setIsLoading(false);
   };
@@ -174,6 +193,23 @@ export default function AdminPage() {
       alert('Failed to add event');
     }
     setIsSubmittingEvent(false);
+  };
+
+  const submitStory = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setIsSubmittingStory(true);
+    try {
+      const { db } = await import('@/lib/firebase');
+      const { collection, addDoc, serverTimestamp } = await import('firebase/firestore');
+      await addDoc(collection(db, 'testimonials'), { ...storyForm, createdAt: serverTimestamp() });
+      alert('Story added successfully!');
+      setStoryForm({ name: '', rating: 5, text: '' });
+      fetchStories();
+    } catch (error) {
+      console.error("Error adding story", error);
+      alert('Failed to add story');
+    }
+    setIsSubmittingStory(false);
   };
 
   const handleGalleryUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -253,6 +289,9 @@ export default function AdminPage() {
           </button>
           <button onClick={() => setActiveTab('gallery')} className={`w-full flex items-center gap-3 px-4 py-3 rounded-xl transition-all ${activeTab === 'gallery' ? 'bg-woodside-800 text-white shadow-lg' : 'text-woodside-300 hover:bg-woodside-800/50 hover:text-white'}`}>
             <ImageIcon className="w-5 h-5" /> Gallery
+          </button>
+          <button onClick={() => setActiveTab('stories')} className={`w-full flex items-center gap-3 px-4 py-3 rounded-xl transition-all ${activeTab === 'stories' ? 'bg-woodside-800 text-white shadow-lg' : 'text-woodside-300 hover:bg-woodside-800/50 hover:text-white'}`}>
+            <MessageSquare className="w-5 h-5" /> Stories
           </button>
         </nav>
         <div className="p-4 border-t border-white/5">
@@ -429,6 +468,51 @@ export default function AdminPage() {
                     ))}
                   </div>
                 )}
+              </div>
+            </div>
+          )}
+
+          {/* STORIES TAB */}
+          {activeTab === 'stories' && (
+            <div className="animate-fade-in">
+              <h2 className="text-3xl font-serif mb-2">Guest Stories</h2>
+              <p className="text-woodside-300 text-sm mb-8">Add or remove guest testimonials shown on the homepage.</p>
+
+              <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+                <div className="lg:col-span-1">
+                  <form onSubmit={submitStory} className="bg-woodside-900/30 border border-white/5 rounded-2xl p-6 space-y-4 sticky top-10">
+                    <h3 className="font-serif text-xl border-b border-white/5 pb-4 mb-4">Add New Story</h3>
+                    <div><label className="block text-xs uppercase tracking-widest text-woodside-300 mb-1">Guest Name</label><input type="text" required placeholder="e.g. Rahul S." value={storyForm.name} onChange={e => setStoryForm(prev => ({...prev, name: e.target.value}))} className="w-full bg-woodside-950/50 border border-white/10 rounded-xl px-4 py-2.5 text-sm text-white placeholder-white/30 focus:outline-none focus:border-woodside-500" /></div>
+                    <div><label className="block text-xs uppercase tracking-widest text-woodside-300 mb-1">Rating (1 to 5)</label><input type="number" min="1" max="5" required value={storyForm.rating} onChange={e => setStoryForm(prev => ({...prev, rating: parseInt(e.target.value)}))} className="w-full bg-woodside-950/50 border border-white/10 rounded-xl px-4 py-2.5 text-sm text-white placeholder-white/30 focus:outline-none focus:border-woodside-500" /></div>
+                    <div><label className="block text-xs uppercase tracking-widest text-woodside-300 mb-1">Review Text</label><textarea required placeholder="Their review..." rows={4} value={storyForm.text} onChange={e => setStoryForm(prev => ({...prev, text: e.target.value}))} className="w-full bg-woodside-950/50 border border-white/10 rounded-xl px-4 py-2.5 text-sm text-white placeholder-white/30 focus:outline-none focus:border-woodside-500 resize-none"></textarea></div>
+
+                    <button disabled={isSubmittingStory} type="submit" className="w-full bg-white text-woodside-950 font-bold py-3 rounded-xl hover:bg-woodside-100 transition-colors flex items-center justify-center disabled:opacity-50 mt-4">
+                      {isSubmittingStory ? <Loader2 className="w-5 h-5 animate-spin" /> : 'Publish Story'}
+                    </button>
+                  </form>
+                </div>
+
+                <div className="lg:col-span-2">
+                  <div className="bg-woodside-900/30 border border-white/5 rounded-2xl p-6">
+                    <h3 className="font-serif text-xl border-b border-white/5 pb-4 mb-4 flex justify-between items-center">Published Stories <button onClick={fetchStories} className="text-sm font-sans bg-white/10 hover:bg-white/20 px-3 py-1.5 rounded-lg transition-colors">Refresh</button></h3>
+                    {isLoading ? <div className="flex justify-center p-8"><Loader2 className="w-6 h-6 animate-spin text-woodside-400" /></div> : stories.length === 0 ? <div className="text-center p-8 text-woodside-400 text-sm">No stories added yet. Hardcoded fallbacks will be shown to users.</div> : (
+                      <div className="space-y-4">
+                        {stories.map(story => (
+                          <div key={story.id} className="bg-woodside-950/50 p-6 rounded-xl border border-white/5">
+                            <div className="flex justify-between items-start mb-2">
+                              <div>
+                                <h4 className="font-bold text-white font-serif">{story.name}</h4>
+                                <div className="text-yellow-500 text-xs">{'★'.repeat(story.rating || 5)}</div>
+                              </div>
+                              <button onClick={() => deleteDocItem('testimonials', story.id, fetchStories)} className="text-red-400 hover:text-red-300 p-1 bg-red-400/10 rounded-lg transition-colors"><Trash2 className="w-4 h-4" /></button>
+                            </div>
+                            <p className="text-sm text-woodside-300 italic">"{story.text}"</p>
+                          </div>
+                        ))}
+                      </div>
+                    )}
+                  </div>
+                </div>
               </div>
             </div>
           )}
