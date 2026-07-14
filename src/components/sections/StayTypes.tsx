@@ -116,17 +116,17 @@ export function StayTypes() {
               </Link>
               
               <div className="flex flex-col h-1/2 md:h-full md:w-1/2 relative z-10 pointer-events-auto">
-                <div className="p-6 md:p-10 flex-1 overflow-y-auto hide-scroll pb-24 md:pb-24">
-                  <div className="flex justify-between items-start mb-6">
-                    <p className="text-woodside-900 font-medium text-lg leading-relaxed flex-1">{stay.description}</p>
+                <div className="px-5 py-4 md:p-10 flex-1 overflow-hidden pb-16 md:pb-24">
+                  <div className="flex justify-between items-start mb-3 md:mb-6">
+                    <p className="text-woodside-900 font-medium text-sm md:text-lg leading-relaxed flex-1 line-clamp-2 md:line-clamp-none">{stay.description}</p>
                     <p className="text-woodside-900 font-serif text-xl font-bold whitespace-nowrap ml-4">{stay.price}</p>
                   </div>
                   
-                  <div className="space-y-4">
+                  <div className="space-y-2 md:space-y-4">
                     {stay.features.map((feature, fidx) => (
-                      <div key={fidx} className="flex items-start gap-3">
-                        <Check className="w-5 h-5 text-woodside-700 shrink-0 mt-0.5" />
-                        <span className="text-woodside-900/90 font-medium text-sm md:text-base">{feature}</span>
+                      <div key={fidx} className="flex items-start gap-2 md:gap-3">
+                        <Check className="w-4 h-4 md:w-5 md:h-5 text-woodside-700 shrink-0 mt-0.5 md:mt-0.5" />
+                        <span className="text-woodside-900/90 font-medium text-xs md:text-base leading-tight md:leading-normal">{feature}</span>
                       </div>
                     ))}
                   </div>
