@@ -28,14 +28,14 @@ const StickyCardItem = ({
   return (
     <div
       ref={container}
-      className="sticky top-0 flex items-center justify-center w-full"
+      className="sticky top-0 flex items-center justify-center w-full h-screen pointer-events-none"
     >
       <motion.div
         style={{
           scale,
           top: `calc(10vh + ${i * 20}px)`,
         }}
-        className="relative origin-top flex flex-col w-full max-w-[95%] sm:max-w-xl md:max-w-3xl lg:max-w-5xl h-[70vh] md:h-[80vh]"
+        className="relative origin-top flex flex-col w-full max-w-[95%] sm:max-w-xl md:max-w-3xl lg:max-w-5xl h-[70vh] md:h-[80vh] pointer-events-auto shadow-2xl"
       >
         {children}
       </motion.div>
