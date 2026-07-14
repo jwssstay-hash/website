@@ -60,7 +60,8 @@ function AnimatedWelcomeText() {
 export function Hero() {
   return (
     <section className="relative w-full min-h-screen sm:h-screen overflow-hidden">
-      <BoomerangVideoBg src={BG_VIDEO} className="absolute inset-0 w-full h-full" />
+      <img src="/Images/Hero/jawadhu-stars.png" alt="Jawadhu Hills at Night" className="absolute inset-0 w-full h-full object-cover" />
+      <div className="absolute inset-0 bg-woodside-950/30" /> {/* Slight overlay for text readability */}
       
       {/* Hero copy */}
       <div className="absolute inset-0 z-10 flex flex-col justify-center items-center text-center px-4 sm:px-6 pb-[30vh] sm:pb-[25vh] md:pb-[30vh]">
