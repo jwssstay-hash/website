@@ -125,7 +125,7 @@ export default function AdminPage() {
       const q = query(collection(db, 'testimonials'), orderBy('createdAt', 'desc'));
       const snapshot = await getDocs(q);
       
-      if (snapshot.empty && !localStorage.getItem('woodside_seeded_stories')) {
+      if (snapshot.empty) {
         const defaults = [
           { name: "Rahul S.", rating: 5, text: "The Glass House is surreal! Best weekend getaway we've had in years. The views at sunrise are incredible." },
           { name: "Priya M.", rating: 5, text: "Incredibly peaceful. The staff is so welcoming and the food is just amazing authentic South Indian." },
@@ -134,7 +134,6 @@ export default function AdminPage() {
         for (const story of defaults) {
           await addDoc(collection(db, 'testimonials'), { ...story, createdAt: serverTimestamp() });
         }
-        localStorage.setItem('woodside_seeded_stories', 'true');
         const newSnapshot = await getDocs(q);
         setStories(newSnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() })));
       } else {
