@@ -66,11 +66,11 @@ export function Hero() {
       {/* Hero copy */}
       <div className="absolute inset-0 z-10 flex flex-col justify-center items-center text-center px-4 sm:px-6 pb-[30vh] sm:pb-[25vh] md:pb-[30vh]">
         <h1
-          className="font-bold leading-[1.1] md:leading-[0.95] text-woodside-900 text-4xl sm:text-5xl md:text-6xl lg:text-[4.75rem] xl:text-[5.25rem] max-w-5xl font-serif tracking-[-0.02em]"
+          className="font-bold leading-[1.1] md:leading-[0.95] text-white text-4xl sm:text-5xl md:text-6xl lg:text-[4.75rem] xl:text-[5.25rem] max-w-5xl font-serif tracking-[-0.02em] drop-shadow-lg"
         >
           <AnimatedWelcomeText />
         </h1>
-        <p className="mt-8 sm:mt-8 text-woodside-300 text-lg sm:text-lg md:text-xl leading-relaxed max-w-lg px-2 drop-shadow-sm font-light mb-10">
+        <p className="mt-8 sm:mt-8 text-woodside-50 text-lg sm:text-lg md:text-xl leading-relaxed max-w-lg px-2 drop-shadow-md font-light mb-10">
           Experience luxury camping and peaceful stays amidst the serene Jawadhu Hills.
         </p>
         <a 
