@@ -300,21 +300,21 @@ export default function AdminPage() {
     <div className="min-h-screen bg-woodside-950 text-white flex flex-col md:flex-row">
       {/* Sidebar */}
       <aside className="w-full md:w-64 bg-woodside-900/40 border-r border-white/5 flex flex-col">
-        <div className="p-6 border-b border-white/5 flex items-center gap-3">
+        <div className="p-6 border-b border-white/5 flex flex-col items-center justify-center gap-2">
           <Logo className="w-8 h-8" />
-          <span className="font-serif font-bold tracking-widest uppercase">Admin</span>
+          <span className="font-serif font-bold tracking-widest text-xs text-white/50 uppercase mt-2">Admin Panel</span>
         </div>
         <nav className="flex-1 p-4 space-y-2">
-          <button onClick={() => setActiveTab('bookings')} className={`w-full flex items-center gap-3 px-4 py-3 rounded-xl transition-all ${activeTab === 'bookings' ? 'bg-woodside-800 text-white shadow-lg' : 'text-woodside-300 hover:bg-woodside-800/50 hover:text-white'}`}>
+          <button onClick={() => setActiveTab('bookings')} className={`w-full flex items-center gap-3 px-4 py-3 rounded-xl transition-all ${activeTab === 'bookings' ? 'bg-woodside-800 text-white shadow-lg' : 'text-white/70 hover:bg-woodside-800/50 hover:text-white'}`}>
             <Users className="w-5 h-5" /> Bookings
           </button>
-          <button onClick={() => setActiveTab('events')} className={`w-full flex items-center gap-3 px-4 py-3 rounded-xl transition-all ${activeTab === 'events' ? 'bg-woodside-800 text-white shadow-lg' : 'text-woodside-300 hover:bg-woodside-800/50 hover:text-white'}`}>
+          <button onClick={() => setActiveTab('events')} className={`w-full flex items-center gap-3 px-4 py-3 rounded-xl transition-all ${activeTab === 'events' ? 'bg-woodside-800 text-white shadow-lg' : 'text-white/70 hover:bg-woodside-800/50 hover:text-white'}`}>
             <Calendar className="w-5 h-5" /> Events
           </button>
-          <button onClick={() => setActiveTab('gallery')} className={`w-full flex items-center gap-3 px-4 py-3 rounded-xl transition-all ${activeTab === 'gallery' ? 'bg-woodside-800 text-white shadow-lg' : 'text-woodside-300 hover:bg-woodside-800/50 hover:text-white'}`}>
+          <button onClick={() => setActiveTab('gallery')} className={`w-full flex items-center gap-3 px-4 py-3 rounded-xl transition-all ${activeTab === 'gallery' ? 'bg-woodside-800 text-white shadow-lg' : 'text-white/70 hover:bg-woodside-800/50 hover:text-white'}`}>
             <ImageIcon className="w-5 h-5" /> Gallery
           </button>
-          <button onClick={() => setActiveTab('stories')} className={`w-full flex items-center gap-3 px-4 py-3 rounded-xl transition-all ${activeTab === 'stories' ? 'bg-woodside-800 text-white shadow-lg' : 'text-woodside-300 hover:bg-woodside-800/50 hover:text-white'}`}>
+          <button onClick={() => setActiveTab('stories')} className={`w-full flex items-center gap-3 px-4 py-3 rounded-xl transition-all ${activeTab === 'stories' ? 'bg-woodside-800 text-white shadow-lg' : 'text-white/70 hover:bg-woodside-800/50 hover:text-white'}`}>
             <MessageSquare className="w-5 h-5" /> Stories
           </button>
         </nav>
@@ -335,19 +335,19 @@ export default function AdminPage() {
               <div className="flex justify-between items-end mb-8">
                 <div>
                   <h2 className="text-3xl font-serif mb-2">Booking Requests</h2>
-                  <p className="text-woodside-300 text-sm">View all inquiries submitted through the website.</p>
+                  <p className="text-white/70 text-sm">View all inquiries submitted through the website.</p>
                 </div>
                 <button onClick={fetchBookings} className="text-sm bg-white/10 hover:bg-white/20 px-4 py-2 rounded-lg transition-colors">Refresh</button>
               </div>
 
               {isLoading ? (
-                <div className="flex justify-center p-12"><Loader2 className="w-8 h-8 animate-spin text-woodside-400" /></div>
+                <div className="flex justify-center p-12"><Loader2 className="w-8 h-8 animate-spin text-white/50" /></div>
               ) : bookings.length === 0 ? (
-                <div className="bg-woodside-900/30 border border-white/5 rounded-2xl p-12 text-center text-woodside-300">No bookings found.</div>
+                <div className="bg-woodside-900/30 border border-white/5 rounded-2xl p-12 text-center text-white/70">No bookings found.</div>
               ) : (
                 <div className="bg-woodside-900/30 border border-white/5 rounded-2xl overflow-hidden overflow-x-auto">
                   <table className="w-full text-left text-sm whitespace-nowrap">
-                    <thead className="bg-woodside-800/50 uppercase tracking-wider text-xs text-woodside-300">
+                    <thead className="bg-woodside-800/50 uppercase tracking-wider text-xs text-white/70">
                       <tr>
                         <th className="px-6 py-4 font-medium">Date Created</th>
                         <th className="px-6 py-4 font-medium">Name</th>
@@ -360,12 +360,12 @@ export default function AdminPage() {
                     <tbody className="divide-y divide-white/5">
                       {bookings.map(b => (
                         <tr key={b.id} className="hover:bg-white/5 transition-colors">
-                          <td className="px-6 py-4 text-woodside-300">{b.createdAt?.toDate ? b.createdAt.toDate().toLocaleDateString() : 'Just now'}</td>
+                          <td className="px-6 py-4 text-white/70">{b.createdAt?.toDate ? b.createdAt.toDate().toLocaleDateString() : 'Just now'}</td>
                           <td className="px-6 py-4 font-medium text-white">{b.name}</td>
                           <td className="px-6 py-4"><span className="bg-woodside-800 px-3 py-1 rounded-full text-xs border border-white/10">{b.stayType}</span></td>
                           <td className="px-6 py-4 text-woodside-200">{b.checkIn} to {b.checkOut}</td>
                           <td className="px-6 py-4">{b.guests}</td>
-                          <td className="px-6 py-4 text-woodside-300"><div>{b.phone}</div><div className="text-xs text-woodside-400">{b.email}</div></td>
+                          <td className="px-6 py-4 text-white/70"><div>{b.phone}</div><div className="text-xs text-white/50">{b.email}</div></td>
                         </tr>
                       ))}
                     </tbody>
@@ -379,7 +379,7 @@ export default function AdminPage() {
           {activeTab === 'events' && (
             <div className="animate-fade-in">
               <h2 className="text-3xl font-serif mb-2">Manage Events</h2>
-              <p className="text-woodside-300 text-sm mb-8">Add new upcoming events to display on the public Events page.</p>
+              <p className="text-white/70 text-sm mb-8">Add new upcoming events to display on the public Events page.</p>
 
               <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
                 <div className="lg:col-span-1">
@@ -387,14 +387,14 @@ export default function AdminPage() {
                     <h3 className="font-serif text-xl border-b border-white/5 pb-4 mb-4">Add New Event</h3>
                     
                     <div>
-                      <label className="block text-xs uppercase tracking-widest text-woodside-300 mb-2">Event Image</label>
+                      <label className="block text-xs uppercase tracking-widest text-white/70 mb-2">Event Image</label>
                       {eventForm.image ? (
                         <div className="relative rounded-xl overflow-hidden h-40 border border-white/10 mb-2">
                           <img src={eventForm.image} alt="Upload preview" className="w-full h-full object-cover" />
                           <button type="button" onClick={() => setEventForm(prev => ({...prev, image: ''}))} className="absolute top-2 right-2 bg-black/50 p-1.5 rounded-full hover:bg-red-500 transition-colors"><Trash2 className="w-4 h-4" /></button>
                         </div>
                       ) : (
-                        <label className="w-full h-24 border-2 border-dashed border-white/20 rounded-xl flex flex-col items-center justify-center text-woodside-300 hover:text-white hover:border-white/40 transition-colors bg-white/5 cursor-pointer">
+                        <label className="w-full h-24 border-2 border-dashed border-white/20 rounded-xl flex flex-col items-center justify-center text-white/70 hover:text-white hover:border-white/40 transition-colors bg-white/5 cursor-pointer">
                           {isUploadingEventImage ? (
                             <Loader2 className="w-6 h-6 mb-2 animate-spin" />
                           ) : (
@@ -406,10 +406,10 @@ export default function AdminPage() {
                       )}
                     </div>
 
-                    <div><label className="block text-xs uppercase tracking-widest text-woodside-300 mb-1">Event Date</label><input type="text" placeholder="e.g. 24th Dec, 2026" value={eventForm.date} onChange={e => setEventForm(prev => ({...prev, date: e.target.value}))} className="w-full bg-woodside-950/50 border border-white/10 rounded-xl px-4 py-2.5 text-sm text-white placeholder-white/30 focus:outline-none focus:border-woodside-500" /></div>
-                    <div><label className="block text-xs uppercase tracking-widest text-woodside-300 mb-1">Description</label><textarea placeholder="Event details..." rows={3} value={eventForm.description} onChange={e => setEventForm(prev => ({...prev, description: e.target.value}))} className="w-full bg-woodside-950/50 border border-white/10 rounded-xl px-4 py-2.5 text-sm text-white placeholder-white/30 focus:outline-none focus:border-woodside-500 resize-none"></textarea></div>
-                    <div><label className="block text-xs uppercase tracking-widest text-woodside-300 mb-1">Poster / Place</label><input type="text" placeholder="e.g. Woodside Serene Farm" value={eventForm.posterPlace} onChange={e => setEventForm(prev => ({...prev, posterPlace: e.target.value}))} className="w-full bg-woodside-950/50 border border-white/10 rounded-xl px-4 py-2.5 text-sm text-white placeholder-white/30 focus:outline-none focus:border-woodside-500" /></div>
-                    <div><label className="block text-xs uppercase tracking-widest text-woodside-300 mb-1">Contact</label><input type="text" placeholder="e.g. +91 98407 41075" value={eventForm.contact} onChange={e => setEventForm(prev => ({...prev, contact: e.target.value}))} className="w-full bg-woodside-950/50 border border-white/10 rounded-xl px-4 py-2.5 text-sm text-white placeholder-white/30 focus:outline-none focus:border-woodside-500" /></div>
+                    <div><label className="block text-xs uppercase tracking-widest text-white/70 mb-1">Event Date</label><input type="text" placeholder="e.g. 24th Dec, 2026" value={eventForm.date} onChange={e => setEventForm(prev => ({...prev, date: e.target.value}))} className="w-full bg-woodside-950/50 border border-white/10 rounded-xl px-4 py-2.5 text-sm text-white placeholder-white/30 focus:outline-none focus:border-woodside-500" /></div>
+                    <div><label className="block text-xs uppercase tracking-widest text-white/70 mb-1">Description</label><textarea placeholder="Event details..." rows={3} value={eventForm.description} onChange={e => setEventForm(prev => ({...prev, description: e.target.value}))} className="w-full bg-woodside-950/50 border border-white/10 rounded-xl px-4 py-2.5 text-sm text-white placeholder-white/30 focus:outline-none focus:border-woodside-500 resize-none"></textarea></div>
+                    <div><label className="block text-xs uppercase tracking-widest text-white/70 mb-1">Poster / Place</label><input type="text" placeholder="e.g. Woodside Serene Farm" value={eventForm.posterPlace} onChange={e => setEventForm(prev => ({...prev, posterPlace: e.target.value}))} className="w-full bg-woodside-950/50 border border-white/10 rounded-xl px-4 py-2.5 text-sm text-white placeholder-white/30 focus:outline-none focus:border-woodside-500" /></div>
+                    <div><label className="block text-xs uppercase tracking-widest text-white/70 mb-1">Contact</label><input type="text" placeholder="e.g. +91 98407 41075" value={eventForm.contact} onChange={e => setEventForm(prev => ({...prev, contact: e.target.value}))} className="w-full bg-woodside-950/50 border border-white/10 rounded-xl px-4 py-2.5 text-sm text-white placeholder-white/30 focus:outline-none focus:border-woodside-500" /></div>
 
                     <button disabled={isSubmittingEvent} type="submit" className="w-full bg-white text-woodside-950 font-bold py-3 rounded-xl hover:bg-woodside-100 transition-colors flex items-center justify-center disabled:opacity-50 mt-4">
                       {isSubmittingEvent ? <Loader2 className="w-5 h-5 animate-spin" /> : 'Publish Event'}
@@ -420,15 +420,15 @@ export default function AdminPage() {
                 <div className="lg:col-span-2">
                   <div className="bg-woodside-900/30 border border-white/5 rounded-2xl p-6">
                     <h3 className="font-serif text-xl border-b border-white/5 pb-4 mb-4 flex justify-between items-center">Published Events <button onClick={fetchEvents} className="text-sm font-sans bg-white/10 hover:bg-white/20 px-3 py-1.5 rounded-lg transition-colors">Refresh</button></h3>
-                    {isLoading ? <div className="flex justify-center p-8"><Loader2 className="w-6 h-6 animate-spin text-woodside-400" /></div> : events.length === 0 ? <div className="text-center p-8 text-woodside-400 text-sm">No events published yet.</div> : (
+                    {isLoading ? <div className="flex justify-center p-8"><Loader2 className="w-6 h-6 animate-spin text-white/50" /></div> : events.length === 0 ? <div className="text-center p-8 text-white/50 text-sm">No events published yet.</div> : (
                       <div className="space-y-4">
                         {events.map(event => (
                           <div key={event.id} className="flex flex-col sm:flex-row gap-4 bg-woodside-950/50 p-4 rounded-xl border border-white/5">
-                            {event.image ? <img src={event.image} alt="Event" className="w-full sm:w-32 h-24 object-cover rounded-lg" /> : <div className="w-full sm:w-32 h-24 bg-woodside-800 rounded-lg flex items-center justify-center text-woodside-400"><ImagePlus className="w-6 h-6" /></div>}
+                            {event.image ? <img src={event.image} alt="Event" className="w-full sm:w-32 h-24 object-cover rounded-lg" /> : <div className="w-full sm:w-32 h-24 bg-woodside-800 rounded-lg flex items-center justify-center text-white/50"><ImagePlus className="w-6 h-6" /></div>}
                             <div className="flex-1">
                               <div className="flex justify-between items-start"><h4 className="font-bold text-white mb-1">{event.date || 'No Date'}</h4><button onClick={() => deleteDocItem('events', event.id, fetchEvents)} className="text-red-400 hover:text-red-300 p-1 bg-red-400/10 rounded-lg transition-colors"><Trash2 className="w-4 h-4" /></button></div>
-                              <p className="text-sm text-woodside-300 mb-2 line-clamp-2">{event.description || 'No description'}</p>
-                              <div className="flex gap-4 text-xs text-woodside-400">{event.posterPlace && <span>📍 {event.posterPlace}</span>}{event.contact && <span>📞 {event.contact}</span>}</div>
+                              <p className="text-sm text-white/70 mb-2 line-clamp-2">{event.description || 'No description'}</p>
+                              <div className="flex gap-4 text-xs text-white/50">{event.posterPlace && <span>📍 {event.posterPlace}</span>}{event.contact && <span>📞 {event.contact}</span>}</div>
                             </div>
                           </div>
                         ))}
@@ -444,11 +444,11 @@ export default function AdminPage() {
           {activeTab === 'gallery' && (
             <div className="animate-fade-in">
               <h2 className="text-3xl font-serif mb-2">Manage Gallery</h2>
-              <p className="text-woodside-300 text-sm mb-8">Add new images to your website gallery. Existing hardcoded images will not be affected.</p>
+              <p className="text-white/70 text-sm mb-8">Add new images to your website gallery. Existing hardcoded images will not be affected.</p>
 
               <div className="bg-woodside-900/30 border border-white/5 rounded-2xl p-6 mb-8 flex flex-col md:flex-row items-end gap-4">
                 <div className="flex-1 w-full">
-                  <label className="block text-xs uppercase tracking-widest text-woodside-300 mb-2">Optional Title</label>
+                  <label className="block text-xs uppercase tracking-widest text-white/70 mb-2">Optional Title</label>
                   <input type="text" placeholder="e.g. Beautiful Morning at the Farm" value={galleryTitle} onChange={e => setGalleryTitle(e.target.value)} className="w-full bg-woodside-950/50 border border-white/10 rounded-xl px-4 py-3 text-sm text-white placeholder-white/30 focus:outline-none focus:border-woodside-500" />
                 </div>
                 <div className="w-full md:w-auto">
@@ -470,9 +470,9 @@ export default function AdminPage() {
                 </h3>
                 
                 {isLoading ? (
-                  <div className="flex justify-center p-8"><Loader2 className="w-8 h-8 animate-spin text-woodside-400" /></div>
+                  <div className="flex justify-center p-8"><Loader2 className="w-8 h-8 animate-spin text-white/50" /></div>
                 ) : gallery.length === 0 ? (
-                  <div className="text-center p-12 bg-woodside-950/50 rounded-xl border border-white/5 text-woodside-400">
+                  <div className="text-center p-12 bg-woodside-950/50 rounded-xl border border-white/5 text-white/50">
                     <ImageIcon className="w-12 h-12 mx-auto mb-3 opacity-50" />
                     <p>No custom images added yet.</p>
                     <p className="text-sm mt-1">The 58 original images are still visible on the website.</p>
@@ -500,15 +500,15 @@ export default function AdminPage() {
           {activeTab === 'stories' && (
             <div className="animate-fade-in">
               <h2 className="text-3xl font-serif mb-2">Guest Stories</h2>
-              <p className="text-woodside-300 text-sm mb-8">Add or remove guest testimonials shown on the homepage.</p>
+              <p className="text-white/70 text-sm mb-8">Add or remove guest testimonials shown on the homepage.</p>
 
               <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
                 <div className="lg:col-span-1">
                   <form onSubmit={submitStory} className="bg-woodside-900/30 border border-white/5 rounded-2xl p-6 space-y-4 sticky top-10">
                     <h3 className="font-serif text-xl border-b border-white/5 pb-4 mb-4">Add New Story</h3>
-                    <div><label className="block text-xs uppercase tracking-widest text-woodside-300 mb-1">Guest Name</label><input type="text" required placeholder="e.g. Rahul S." value={storyForm.name} onChange={e => setStoryForm(prev => ({...prev, name: e.target.value}))} className="w-full bg-woodside-950/50 border border-white/10 rounded-xl px-4 py-2.5 text-sm text-white placeholder-white/30 focus:outline-none focus:border-woodside-500" /></div>
-                    <div><label className="block text-xs uppercase tracking-widest text-woodside-300 mb-1">Rating (1 to 5)</label><input type="number" min="1" max="5" required value={storyForm.rating} onChange={e => setStoryForm(prev => ({...prev, rating: parseInt(e.target.value)}))} className="w-full bg-woodside-950/50 border border-white/10 rounded-xl px-4 py-2.5 text-sm text-white placeholder-white/30 focus:outline-none focus:border-woodside-500" /></div>
-                    <div><label className="block text-xs uppercase tracking-widest text-woodside-300 mb-1">Review Text</label><textarea required placeholder="Their review..." rows={4} value={storyForm.text} onChange={e => setStoryForm(prev => ({...prev, text: e.target.value}))} className="w-full bg-woodside-950/50 border border-white/10 rounded-xl px-4 py-2.5 text-sm text-white placeholder-white/30 focus:outline-none focus:border-woodside-500 resize-none"></textarea></div>
+                    <div><label className="block text-xs uppercase tracking-widest text-white/70 mb-1">Guest Name</label><input type="text" required placeholder="e.g. Rahul S." value={storyForm.name} onChange={e => setStoryForm(prev => ({...prev, name: e.target.value}))} className="w-full bg-woodside-950/50 border border-white/10 rounded-xl px-4 py-2.5 text-sm text-white placeholder-white/30 focus:outline-none focus:border-woodside-500" /></div>
+                    <div><label className="block text-xs uppercase tracking-widest text-white/70 mb-1">Rating (1 to 5)</label><input type="number" min="1" max="5" required value={storyForm.rating} onChange={e => setStoryForm(prev => ({...prev, rating: parseInt(e.target.value)}))} className="w-full bg-woodside-950/50 border border-white/10 rounded-xl px-4 py-2.5 text-sm text-white placeholder-white/30 focus:outline-none focus:border-woodside-500" /></div>
+                    <div><label className="block text-xs uppercase tracking-widest text-white/70 mb-1">Review Text</label><textarea required placeholder="Their review..." rows={4} value={storyForm.text} onChange={e => setStoryForm(prev => ({...prev, text: e.target.value}))} className="w-full bg-woodside-950/50 border border-white/10 rounded-xl px-4 py-2.5 text-sm text-white placeholder-white/30 focus:outline-none focus:border-woodside-500 resize-none"></textarea></div>
 
                     <button disabled={isSubmittingStory} type="submit" className="w-full bg-white text-woodside-950 font-bold py-3 rounded-xl hover:bg-woodside-100 transition-colors flex items-center justify-center disabled:opacity-50 mt-4">
                       {isSubmittingStory ? <Loader2 className="w-5 h-5 animate-spin" /> : (editingStoryId ? 'Update Story' : 'Publish Story')}
@@ -524,8 +524,8 @@ export default function AdminPage() {
                 <div className="lg:col-span-2">
                   <div className="bg-woodside-900/30 border border-white/5 rounded-2xl p-6">
                     <h3 className="font-serif text-xl border-b border-white/5 pb-4 mb-4 flex justify-between items-center">Published Stories <button onClick={fetchStories} className="text-sm font-sans bg-white/10 hover:bg-white/20 px-3 py-1.5 rounded-lg transition-colors">Refresh</button></h3>
-                    {isLoading ? <div className="flex justify-center p-8"><Loader2 className="w-6 h-6 animate-spin text-woodside-400" /></div> : stories.length === 0 ? (
-                      <div className="text-center p-8 text-woodside-400 text-sm flex flex-col items-center">
+                    {isLoading ? <div className="flex justify-center p-8"><Loader2 className="w-6 h-6 animate-spin text-white/50" /></div> : stories.length === 0 ? (
+                      <div className="text-center p-8 text-white/50 text-sm flex flex-col items-center">
                         <p className="mb-4">No stories added yet. Published stories will appear here.</p>
                       </div>
                     ) : (
@@ -542,7 +542,7 @@ export default function AdminPage() {
                                 <button onClick={() => deleteDocItem('testimonials', story.id, fetchStories)} className="text-red-400 hover:text-red-300 p-1.5 bg-red-400/10 rounded-lg transition-colors"><Trash2 className="w-4 h-4" /></button>
                               </div>
                             </div>
-                            <p className="text-sm text-woodside-300 italic">"{story.text}"</p>
+                            <p className="text-sm text-white/70 italic">"{story.text}"</p>
                           </div>
                         ))}
                       </div>
