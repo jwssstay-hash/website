@@ -1,7 +1,7 @@
 'use client';
 
 import React, { useState, useEffect } from 'react';
-import { Lock, LogOut, Calendar, Users, ImagePlus, Loader2, Trash2, Image as ImageIcon, MessageSquare } from 'lucide-react';
+import { Lock, LogOut, Calendar, Users, ImagePlus, Loader2, Trash2, Image as ImageIcon, MessageSquare, Edit2 } from 'lucide-react';
 import { Logo } from '@/components/ui/Logo';
 
 // Hardcoded users from request
@@ -33,6 +33,7 @@ export default function AdminPage() {
 
   const [storyForm, setStoryForm] = useState({ name: '', rating: 5, text: '' });
   const [isSubmittingStory, setIsSubmittingStory] = useState(false);
+  const [editingStoryId, setEditingStoryId] = useState<string | null>(null);
 
   const [galleryTitle, setGalleryTitle] = useState('');
   const [isUploadingGallery, setIsUploadingGallery] = useState(false);
@@ -200,16 +201,42 @@ export default function AdminPage() {
     setIsSubmittingStory(true);
     try {
       const { db } = await import('@/lib/firebase');
-      const { collection, addDoc, serverTimestamp } = await import('firebase/firestore');
-      await addDoc(collection(db, 'testimonials'), { ...storyForm, createdAt: serverTimestamp() });
-      alert('Story added successfully!');
+      const { collection, addDoc, doc, updateDoc, serverTimestamp } = await import('firebase/firestore');
+      
+      if (editingStoryId) {
+        await updateDoc(doc(db, 'testimonials', editingStoryId), { ...storyForm });
+        alert('Story updated successfully!');
+      } else {
+        await addDoc(collection(db, 'testimonials'), { ...storyForm, createdAt: serverTimestamp() });
+        alert('Story added successfully!');
+      }
+      
       setStoryForm({ name: '', rating: 5, text: '' });
+      setEditingStoryId(null);
       fetchStories();
     } catch (error) {
-      console.error("Error adding story", error);
-      alert('Failed to add story');
+      console.error("Error saving story", error);
+      alert('Failed to save story');
     }
     setIsSubmittingStory(false);
+  };
+
+  const seedDefaultStories = async () => {
+    if (!confirm('Add default stories to database?')) return;
+    setIsLoading(true);
+    try {
+      const { db } = await import('@/lib/firebase');
+      const { collection, addDoc, serverTimestamp } = await import('firebase/firestore');
+      const defaults = [
+        { name: "Rahul S.", rating: 5, text: "The Glass House is surreal! Best weekend getaway we've had in years. The views at sunrise are incredible." },
+        { name: "Priya M.", rating: 5, text: "Incredibly peaceful. The staff is so welcoming and the food is just amazing authentic South Indian." },
+        { name: "Arun K.", rating: 4, text: "Loved the family tent experience. Kids had a great time around the campfire and the morning trek." }
+      ];
+      for (const story of defaults) {
+        await addDoc(collection(db, 'testimonials'), { ...story, createdAt: serverTimestamp() });
+      }
+      fetchStories();
+    } catch (e) { console.error(e); }
   };
 
   const handleGalleryUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -487,15 +514,25 @@ export default function AdminPage() {
                     <div><label className="block text-xs uppercase tracking-widest text-woodside-300 mb-1">Review Text</label><textarea required placeholder="Their review..." rows={4} value={storyForm.text} onChange={e => setStoryForm(prev => ({...prev, text: e.target.value}))} className="w-full bg-woodside-950/50 border border-white/10 rounded-xl px-4 py-2.5 text-sm text-white placeholder-white/30 focus:outline-none focus:border-woodside-500 resize-none"></textarea></div>
 
                     <button disabled={isSubmittingStory} type="submit" className="w-full bg-white text-woodside-950 font-bold py-3 rounded-xl hover:bg-woodside-100 transition-colors flex items-center justify-center disabled:opacity-50 mt-4">
-                      {isSubmittingStory ? <Loader2 className="w-5 h-5 animate-spin" /> : 'Publish Story'}
+                      {isSubmittingStory ? <Loader2 className="w-5 h-5 animate-spin" /> : (editingStoryId ? 'Update Story' : 'Publish Story')}
                     </button>
+                    {editingStoryId && (
+                      <button type="button" onClick={() => { setStoryForm({ name: '', rating: 5, text: '' }); setEditingStoryId(null); }} className="w-full bg-woodside-800 text-white font-bold py-3 rounded-xl hover:bg-woodside-700 transition-colors mt-2 text-sm">
+                        Cancel Edit
+                      </button>
+                    )}
                   </form>
                 </div>
 
                 <div className="lg:col-span-2">
                   <div className="bg-woodside-900/30 border border-white/5 rounded-2xl p-6">
                     <h3 className="font-serif text-xl border-b border-white/5 pb-4 mb-4 flex justify-between items-center">Published Stories <button onClick={fetchStories} className="text-sm font-sans bg-white/10 hover:bg-white/20 px-3 py-1.5 rounded-lg transition-colors">Refresh</button></h3>
-                    {isLoading ? <div className="flex justify-center p-8"><Loader2 className="w-6 h-6 animate-spin text-woodside-400" /></div> : stories.length === 0 ? <div className="text-center p-8 text-woodside-400 text-sm">No stories added yet. Hardcoded fallbacks will be shown to users.</div> : (
+                    {isLoading ? <div className="flex justify-center p-8"><Loader2 className="w-6 h-6 animate-spin text-woodside-400" /></div> : stories.length === 0 ? (
+                      <div className="text-center p-8 text-woodside-400 text-sm flex flex-col items-center">
+                        <p className="mb-4">No stories added yet. Hardcoded fallbacks will be shown to users.</p>
+                        <button onClick={seedDefaultStories} className="bg-woodside-800 text-white px-4 py-2 rounded-lg hover:bg-woodside-700 transition-colors">Import Default Stories</button>
+                      </div>
+                    ) : (
                       <div className="space-y-4">
                         {stories.map(story => (
                           <div key={story.id} className="bg-woodside-950/50 p-6 rounded-xl border border-white/5">
@@ -504,8 +541,10 @@ export default function AdminPage() {
                                 <h4 className="font-bold text-white font-serif">{story.name}</h4>
                                 <div className="text-yellow-500 text-xs">{'★'.repeat(story.rating || 5)}</div>
                               </div>
-                              <button onClick={() => deleteDocItem('testimonials', story.id, fetchStories)} className="text-red-400 hover:text-red-300 p-1 bg-red-400/10 rounded-lg transition-colors"><Trash2 className="w-4 h-4" /></button>
-                            </div>
+                              <div className="flex gap-2">
+                                <button onClick={() => { setStoryForm({ name: story.name, rating: story.rating, text: story.text }); setEditingStoryId(story.id); window.scrollTo(0, 0); }} className="text-blue-400 hover:text-blue-300 p-1.5 bg-blue-400/10 rounded-lg transition-colors"><Edit2 className="w-4 h-4" /></button>
+                                <button onClick={() => deleteDocItem('testimonials', story.id, fetchStories)} className="text-red-400 hover:text-red-300 p-1.5 bg-red-400/10 rounded-lg transition-colors"><Trash2 className="w-4 h-4" /></button>
+                              </div>
                             <p className="text-sm text-woodside-300 italic">"{story.text}"</p>
                           </div>
                         ))}
