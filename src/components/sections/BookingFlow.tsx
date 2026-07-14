@@ -13,12 +13,12 @@ const categories = [
 
 const subStays: Record<string, any[]> = {
   'Tent Stay': [
-    { name: 'Camp Tent', image: '/Images/Camp/Main.jpeg', tariff: '₹1500 / Guest', capacity: '2 Adults' },
-    { name: 'Family Tent', image: '/Images/Family tent/Main.jpeg', tariff: '₹5000 / Booking', capacity: '4 Adults + 1 Kid' }
+    { name: 'Camp Tent', image: '/Images/Camp/Main.jpeg', tariff: '', capacity: '2 Adults' },
+    { name: 'Family Tent', image: '/Images/Family tent/Main.jpeg', tariff: '', capacity: '4 Adults + 1 Kid' }
   ],
   'Room Stay': [
-    { name: 'Glass House', image: '/Images/Glass Room/Main.jpeg', tariff: '₹1500 / Guest', capacity: 'Up to 10 Guests' },
-    { name: 'Cottages', image: '/Images/Cottage Rooms/Main.jpeg', tariff: '₹5000 / Cottage', capacity: '2-3 Guests' }
+    { name: 'Glass House', image: '/Images/Glass Room/Main.jpeg', tariff: '', capacity: 'Up to 10 Guests' },
+    { name: 'Cottages', image: '/Images/Cottage Rooms/Main.jpeg', tariff: '', capacity: '2-3 Guests' }
   ]
 };
 

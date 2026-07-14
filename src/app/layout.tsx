@@ -68,7 +68,6 @@ export default function RootLayout({
       "latitude": 12.5786, // Approximate for Jawadhu hills, they can update exact
       "longitude": 78.8950
     },
-    "priceRange": "₹1500 - ₹5000",
     "starRating": {
       "@type": "Rating",
       "ratingValue": "5"

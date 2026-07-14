@@ -10,11 +10,10 @@ const stays = [
     description: "The camp tent is 4.5 ft height at entrance and 6/6.5 ft length and breadth.",
     image: "/Images/Camp/Main.jpeg",
     capacity: "2 Adults",
-    price: "₹1500 / Guest",
+    price: "",
     badge: "",
     features: [
       "Accommodates 2 adults",
-      "₹1500/guest >12, 50% for ages 6-12 (Below 6 free)",
       "Complimentary South Indian veg breakfast",
       "1 Exclusive restroom per booking"
     ],
@@ -26,11 +25,10 @@ const stays = [
     description: "Spacious family camping experience with 4 mattresses placed inside the tent.",
     image: "/Images/Family tent/Main.jpeg",
     capacity: "4 Adults + 1 Kid",
-    price: "₹5000 / Booking",
+    price: "",
     badge: "Family Friendly",
     features: [
       "Accommodates up to 6 adults max",
-      "₹5000 charged for 4 adults and 1 kid",
       "Fan, light, blankets, and pillows provided",
       "Complimentary South Indian veg breakfast"
     ],
@@ -42,11 +40,10 @@ const stays = [
     description: "This is an 800 sq ft room with 2 attached restrooms and dressing area.",
     image: "/Images/Glass Room/Main.jpeg",
     capacity: "Up to 10 Guests",
-    price: "₹1500 / Guest",
+    price: "",
     badge: "Group Stay",
     features: [
       "Accommodates up to 10 guests (Single cots provided)",
-      "₹1500/guest >12, 50% for ages 6-12 (Below 6 free)",
       "2 Attached restrooms & dressing area",
       "Complimentary South Indian veg breakfast"
     ],
@@ -58,11 +55,9 @@ const stays = [
     description: "Each cottage is 350 sq ft, air-conditioned with a king size cot and mattress.",
     image: "/Images/Cottage Rooms/Main.jpeg",
     capacity: "2-3 Guests",
-    price: "₹5000 / Cottage",
+    price: "",
     badge: "Premium Stay",
     features: [
-      "₹5000 per cottage for 2 adults",
-      "Additional Rs1000 for one extra guest",
       "Air-conditioned with king size cot",
       "Complimentary South Indian veg breakfast"
     ],
