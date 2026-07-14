@@ -545,6 +545,7 @@ export default function AdminPage() {
                                 <button onClick={() => { setStoryForm({ name: story.name, rating: story.rating, text: story.text }); setEditingStoryId(story.id); window.scrollTo(0, 0); }} className="text-blue-400 hover:text-blue-300 p-1.5 bg-blue-400/10 rounded-lg transition-colors"><Edit2 className="w-4 h-4" /></button>
                                 <button onClick={() => deleteDocItem('testimonials', story.id, fetchStories)} className="text-red-400 hover:text-red-300 p-1.5 bg-red-400/10 rounded-lg transition-colors"><Trash2 className="w-4 h-4" /></button>
                               </div>
+                            </div>
                             <p className="text-sm text-woodside-300 italic">"{story.text}"</p>
                           </div>
                         ))}
