@@ -10,22 +10,22 @@ const stayMap: Record<string, { title: string; folder: string; description: stri
   'camp-tent': {
     title: 'Camp Tent',
     folder: 'Camp',
-    description: 'The camp tent is 4.5 ft height at entrance and 6/6.5 ft length and breadth. It can accommodate 2 adults. Tariff: Rs1500 per guest above 12 years and 50% for guest between age 6 and 12. Below 6 Years of age is free. All guests will be served with a complimentary South Indian veg breakfast. 1 Exclusive rest room will be provided per booking. Additional rest rooms will be based on the number of guests.',
+    description: 'The camp tent is 4.5 ft height at entrance and 6/6.5 ft length and breadth. It can accommodate 2 adults. All guests will be served with a complimentary South Indian veg breakfast. 1 Exclusive rest room will be provided per booking. Additional rest rooms will be based on the number of guests.',
   },
   'family-tent': {
     title: 'Family Tent',
     folder: 'Family tent',
-    description: 'This Family tent can accommodate 4 adults and 1 kid. A fan, light and a rest room will be allotted for this booking. 4 mattresses will be placed inside the tent. Blankets and pillows will be provided. A max of 6 adults can stay. Tariff: Rs5000 will be charged for 4 adults and 1 kid. All guests will be served with a complimentary South Indian veg breakfast.',
+    description: 'This Family tent can accommodate 4 adults and 1 kid. A fan, light and a rest room will be allotted for this booking. 4 mattresses will be placed inside the tent. Blankets and pillows will be provided. A max of 6 adults can stay. All guests will be served with a complimentary South Indian veg breakfast.',
   },
   'glass-house': {
     title: 'Glass House',
     folder: 'Glass Room',
-    description: 'This room is an 800 Sq ft room with 2 Attached restrooms and dressing area. It can accommodate upto 10 guests. Single cots will be provided to the guests. Tariff: Rs1500 per guest above 12 years and 50% for guest between age 6 and 12. Below 6 Years of age is free. All guests will be served with a complimentary South Indian veg breakfast.',
+    description: 'This room is an 800 Sq ft room with 2 Attached restrooms and dressing area. It can accommodate upto 10 guests. Single cots will be provided to the guests. All guests will be served with a complimentary South Indian veg breakfast.',
   },
   'cottages': {
     title: 'Cottages',
     folder: 'Cottage Rooms',
-    description: 'There are 2 cottages available. Each cottage is 350 sqft, Air conditioned with king size cot and mattress. 2 guests with an additional guest can stay in a cottage. Tariff: Rs5000 per cottage for 2 adults and additional Rs1000 for another guest will be charged. A cot with mattress will be provided for additional guest. All guests will be served with complimentary South Indian veg breakfast.',
+    description: 'There are 2 cottages available. Each cottage is 350 sqft, Air conditioned with king size cot and mattress. 2 guests with an additional guest can stay in a cottage. A cot with mattress will be provided for additional guest. All guests will be served with complimentary South Indian veg breakfast.',
   },
 };
 
@@ -74,13 +74,13 @@ export default async function StayPage({ params }: { params: Promise<{ slug: str
         <div className="bg-woodside-900/60 backdrop-blur-sm border border-woodside-800 p-6 md:p-8 rounded-2xl max-w-4xl mx-auto text-left shadow-2xl flex flex-col md:flex-row gap-8">
           <div className="flex-1">
             <h3 className="text-woodside-100 font-bold uppercase tracking-wider text-sm mb-4 border-b border-woodside-800 pb-2">Booking Info</h3>
-            <p className="text-woodside-300 text-sm leading-relaxed mb-4">
+            <p className="text-white/80 text-sm leading-relaxed mb-4">
               On payment of at least <strong className="text-white">50% advance</strong> and confirming your booking, you can request for a Camp fire and pre-book your meals (veg and non-veg).
             </p>
           </div>
           <div className="flex-1">
             <h3 className="text-woodside-100 font-bold uppercase tracking-wider text-sm mb-4 border-b border-woodside-800 pb-2">Places to Visit Nearby</h3>
-            <ul className="text-woodside-300 text-sm leading-relaxed space-y-2 list-disc list-inside">
+            <ul className="text-white/80 text-sm leading-relaxed space-y-2 list-disc list-inside">
               <li>Kolappan lake</li>
               <li>Bheeman water falls</li>
               <li>Vyni Bappu observatory</li>
