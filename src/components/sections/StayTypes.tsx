@@ -115,7 +115,7 @@ export function StayTypes() {
                 </div>
               </Link>
               
-              <div className="flex flex-col h-1/2 md:h-full md:w-1/2 relative">
+              <div className="flex flex-col h-1/2 md:h-full md:w-1/2 relative z-10 pointer-events-auto">
                 <div className="p-6 md:p-10 flex-1 overflow-y-auto hide-scroll pb-24 md:pb-24">
                   <div className="flex justify-between items-start mb-6">
                     <p className="text-woodside-900 font-medium text-lg leading-relaxed flex-1">{stay.description}</p>
@@ -132,11 +132,11 @@ export function StayTypes() {
                   </div>
                 </div>
 
-                <div className="absolute bottom-0 left-0 right-0 px-6 py-4 md:px-10 md:py-6 border-t border-woodside-900/20 flex justify-between items-center shrink-0 bg-white/50 backdrop-blur-xl">
+                <div className="absolute bottom-0 left-0 right-0 px-6 py-4 md:px-10 md:py-6 border-t border-woodside-900/20 flex justify-between items-center shrink-0 bg-white/50 backdrop-blur-xl z-20">
                   <div className="flex gap-4 text-woodside-800">
                     {stay.icons}
                   </div>
-                  <Link href={`/stays/${stay.slug}`} className="text-sm md:text-base font-bold tracking-wider uppercase text-woodside-900 hover:text-woodside-700 transition-colors underline underline-offset-4">
+                  <Link href={`/stays/${stay.slug}`} className="relative z-50 text-sm md:text-base font-bold tracking-wider uppercase text-woodside-900 hover:text-woodside-700 transition-colors underline underline-offset-4 cursor-pointer">
                     View Details
                   </Link>
                 </div>
