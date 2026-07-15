@@ -70,7 +70,7 @@ export function Hero() {
         >
           <AnimatedWelcomeText />
         </h1>
-        <p className="mt-8 sm:mt-8 text-woodside-50 text-lg sm:text-lg md:text-xl leading-relaxed max-w-lg px-2 drop-shadow-md font-light mb-10">
+        <p className="mt-8 sm:mt-8 text-white text-lg sm:text-lg md:text-xl leading-relaxed max-w-lg px-2 drop-shadow-md font-light mb-10">
           Experience luxury camping and peaceful stays amidst the serene Jawadhu Hills.
         </p>
         <a 

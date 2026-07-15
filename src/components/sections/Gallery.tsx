@@ -113,48 +113,24 @@ export function Gallery() {
             <Loader2 className="w-12 h-12 text-woodside-300 animate-spin" />
           </div>
         ) : (
-          <div className="relative w-full rounded-3xl overflow-hidden shadow-2xl border border-white/10 group/slider">
-            <div className="flex overflow-x-auto snap-x snap-mandatory h-[60vh] md:h-[75vh] w-full hide-scrollbar scroll-smooth" style={{ scrollbarWidth: 'none', msOverflowStyle: 'none' }}>
-              {galleryImages.map((img, idx) => (
-                <div
-                  key={idx}
-                  className="relative shrink-0 w-full h-full snap-center flex items-center justify-center bg-woodside-950"
-                >
-                  <img 
-                    src={img.src} 
-                    alt={img.title}
-                    loading="lazy"
-                    className="w-full h-full object-cover"
-                  />
-                  <div className="absolute bottom-0 left-0 right-0 p-6 bg-gradient-to-t from-woodside-950/90 to-transparent pointer-events-none">
-                    <span className="text-white font-serif text-2xl tracking-wide">{img.title}</span>
-                  </div>
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-2 md:gap-4 auto-rows-[150px] md:auto-rows-[200px]">
+            {galleryImages.map((img, idx) => (
+              <div
+                key={idx}
+                className={`relative group rounded-xl overflow-hidden cursor-pointer shadow-lg transition-transform duration-500 hover:scale-[1.02] ${img.colSpan} ${img.rowSpan}`}
+              >
+                <img 
+                  src={img.src} 
+                  alt={img.title}
+                  loading="lazy"
+                  className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110"
+                />
+                <div className="absolute inset-0 bg-woodside-950/40 opacity-0 group-hover:opacity-100 backdrop-blur-[2px] transition-all duration-500 flex flex-col items-center justify-center">
+                  <ZoomIn className="text-white mb-2" size={32} />
+                  <span className="text-white font-serif text-lg tracking-wide text-center px-4">{img.title}</span>
                 </div>
-              ))}
-            </div>
-            
-            <div className="absolute inset-y-0 left-4 flex items-center pointer-events-none">
-              <div className="bg-woodside-950/50 backdrop-blur-md text-white/50 p-2 rounded-full pointer-events-auto cursor-pointer hover:bg-woodside-900 hover:text-white transition-colors" onClick={(e) => {
-                const container = e.currentTarget.parentElement?.previousElementSibling;
-                if (container) container.scrollBy({ left: -container.clientWidth, behavior: 'smooth' });
-              }}>
-                <svg className="w-6 h-6 rotate-180" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 5l7 7-7 7"></path></svg>
               </div>
-            </div>
-            <div className="absolute inset-y-0 right-4 flex items-center pointer-events-none">
-              <div className="bg-woodside-950/50 backdrop-blur-md text-white/50 p-2 rounded-full pointer-events-auto cursor-pointer hover:bg-woodside-900 hover:text-white transition-colors" onClick={(e) => {
-                const container = e.currentTarget.parentElement?.previousElementSibling?.previousElementSibling;
-                if (container) container.scrollBy({ left: container.clientWidth, behavior: 'smooth' });
-              }}>
-                <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 5l7 7-7 7"></path></svg>
-              </div>
-            </div>
-            
-            <style jsx>{`
-              .hide-scrollbar::-webkit-scrollbar {
-                display: none;
-              }
-            `}</style>
+            ))}
           </div>
         )}
       </div>

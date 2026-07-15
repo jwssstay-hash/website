@@ -5,25 +5,25 @@ const attractions = [
   {
     name: "Kolappan Lake",
     distance: "15 Mins",
-    image: "https://upload.wikimedia.org/wikipedia/commons/thumb/2/23/Yelagiri_lake_1.jpg/800px-Yelagiri_lake_1.jpg",
+    image: "/Images/Attractions/lake.png",
     desc: "A serene boating lake surrounded by misty hills."
   },
   {
     name: "Bheeman Falls",
     distance: "25 Mins",
-    image: "https://upload.wikimedia.org/wikipedia/commons/thumb/f/fa/Jalagamparai_Falls.jpg/800px-Jalagamparai_Falls.jpg",
+    image: "/Images/Attractions/falls.png",
     desc: "A breathtaking waterfall hidden deep within the forest."
   },
   {
     name: "Vainu Bappu Observatory",
     distance: "35 Mins",
-    image: "https://upload.wikimedia.org/wikipedia/commons/thumb/1/1c/Vainu_Bappu_Observatory%2C_Kavalur.jpg/800px-Vainu_Bappu_Observatory%2C_Kavalur.jpg",
+    image: "/Images/Attractions/observatory.png",
     desc: "Asia's largest telescope observatory. Perfect for stargazing."
   },
   {
     name: "Andiappanur Dam",
     distance: "1 Hr 15 Mins",
-    image: "https://upload.wikimedia.org/wikipedia/commons/thumb/2/24/Sathanur_Dam.jpg/800px-Sathanur_Dam.jpg",
+    image: "/Images/Attractions/dam.png",
     desc: "A picturesque dam offering stunning views at the foothills."
   }
 ];
