@@ -102,7 +102,7 @@ export default function EventsPage() {
                     )}
                   </div>
                   
-                  <a href={`/booking?category=Event&stay=${encodeURIComponent(event.posterPlace || 'Special Event')}`} className="mt-6 w-full bg-white text-woodside-950 font-bold py-3 rounded-xl hover:bg-woodside-100 transition-colors shadow-lg text-center flex items-center justify-center">
+                  <a href={`/booking?category=Event&stay=${encodeURIComponent(event.title || event.description?.substring(0, 30) || 'Special Event')}&date=${encodeURIComponent(event.date || '')}`} className="mt-6 w-full bg-white text-woodside-950 font-bold py-3 rounded-xl hover:bg-woodside-100 transition-colors shadow-lg text-center flex items-center justify-center">
                     Book this Event
                   </a>
                 </div>

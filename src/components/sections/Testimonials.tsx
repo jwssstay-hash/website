@@ -34,12 +34,9 @@ export function Testimonials() {
   return (
     <section className="py-24 bg-woodside-950 relative">
       <div className="container mx-auto px-6 md:px-12 text-center">
-        <h2 className="text-4xl md:text-5xl font-serif text-white mb-4">
+        <h2 className="text-4xl md:text-5xl font-serif text-white mb-16">
           Guest Stories
         </h2>
-        <p className="text-woodside-50 font-sans tracking-widest uppercase text-sm mb-16">
-          What our visitors say
-        </p>
         
         <div className="grid grid-cols-1 md:grid-cols-3 gap-8 max-w-6xl mx-auto">
           {isLoading ? (

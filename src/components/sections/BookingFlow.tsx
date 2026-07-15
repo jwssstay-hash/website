@@ -48,8 +48,10 @@ export function Booking() {
         createdAt: serverTimestamp()
       });
 
-      const message = `Hello Woodside Serene! I would like to request a booking:\n\n*Name:* ${formData.name}\n*${category === 'Event' ? 'Event' : 'Stay'} Type:* ${stay}\n*Dates:* ${formData.checkIn} to ${formData.checkOut}\n*Guests:* ${formData.guests}\n*Phone:* ${formData.phone}\n*Email:* ${formData.email}\n\nPlease confirm availability and send the 50% advance payment details.`;
-      const whatsappUrl = `https://wa.me/919840741075?text=${encodeURIComponent(message)}`;
+      const message = category === 'Event'
+        ? `Hello Woodside Serene! I would like to request a booking for an Event:\n\n*Name:* ${formData.name}\n*Event Name:* ${stay}\n*Event Date:* ${searchParams.get('date') || 'TBD'}\n*Guests:* ${formData.guests}\n*Phone:* ${formData.phone}\n*Email:* ${formData.email}\n\nPlease confirm my event booking.`
+        : `Hello Woodside Serene! I would like to request a stay booking:\n\n*Name:* ${formData.name}\n*Stay Type:* ${stay}\n*Dates:* ${formData.checkIn} to ${formData.checkOut}\n*Guests:* ${formData.guests}\n*Phone:* ${formData.phone}\n*Email:* ${formData.email}\n\nPlease confirm availability and send the 50% advance payment details.`;
+      const whatsappUrl = `https://api.whatsapp.com/send?phone=919840741075&text=${encodeURIComponent(message)}`;
       window.open(whatsappUrl, '_blank');
 
       setStatus('success');
@@ -169,16 +171,23 @@ export function Booking() {
                       <input required type="tel" name="phone" value={formData.phone} onChange={handleChange} className="w-full px-4 py-3 rounded-xl bg-woodside-950/50 border border-white/10 text-white focus:outline-none focus:border-woodside-500 focus:ring-1 focus:ring-woodside-500 placeholder-white/30" placeholder="+91 98765 43210" />
                     </div>
                   </div>
-                  <div className="grid grid-cols-2 gap-4">
-                    <div>
-                      <label className="block text-xs font-bold tracking-wider text-woodside-300 uppercase mb-1">Check-in</label>
-                      <input required type="date" name="checkIn" value={formData.checkIn} onChange={handleChange} className="w-full px-4 py-3 rounded-xl bg-woodside-950/50 border border-white/10 text-white focus:outline-none focus:border-woodside-500 focus:ring-1 focus:ring-woodside-500 [color-scheme:dark]" />
+                  {category !== 'Event' ? (
+                    <div className="grid grid-cols-2 gap-4">
+                      <div>
+                        <label className="block text-xs font-bold tracking-wider text-woodside-300 uppercase mb-1">Check-in</label>
+                        <input required type="date" name="checkIn" value={formData.checkIn} onChange={handleChange} className="w-full px-4 py-3 rounded-xl bg-woodside-950/50 border border-white/10 text-white focus:outline-none focus:border-woodside-500 focus:ring-1 focus:ring-woodside-500 [color-scheme:dark]" />
+                      </div>
+                      <div>
+                        <label className="block text-xs font-bold tracking-wider text-woodside-300 uppercase mb-1">Check-out</label>
+                        <input required type="date" name="checkOut" value={formData.checkOut} onChange={handleChange} className="w-full px-4 py-3 rounded-xl bg-woodside-950/50 border border-white/10 text-white focus:outline-none focus:border-woodside-500 focus:ring-1 focus:ring-woodside-500 [color-scheme:dark]" />
+                      </div>
                     </div>
+                  ) : (
                     <div>
-                      <label className="block text-xs font-bold tracking-wider text-woodside-300 uppercase mb-1">Check-out</label>
-                      <input required type="date" name="checkOut" value={formData.checkOut} onChange={handleChange} className="w-full px-4 py-3 rounded-xl bg-woodside-950/50 border border-white/10 text-white focus:outline-none focus:border-woodside-500 focus:ring-1 focus:ring-woodside-500 [color-scheme:dark]" />
+                      <label className="block text-xs font-bold tracking-wider text-woodside-300 uppercase mb-1">Event Date</label>
+                      <input type="text" readOnly value={searchParams.get('date') || ''} className="w-full px-4 py-3 rounded-xl bg-woodside-950/30 border border-white/5 text-white/50 cursor-not-allowed" />
                     </div>
-                  </div>
+                  )}
                   <div>
                     <label className="block text-xs font-bold tracking-wider text-woodside-300 uppercase mb-1">Guests</label>
                     <select name="guests" value={formData.guests} onChange={handleChange} className="w-full px-4 py-3 rounded-xl bg-woodside-950/50 border border-white/10 text-white focus:outline-none focus:border-woodside-500 focus:ring-1 focus:ring-woodside-500">
