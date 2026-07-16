@@ -30,7 +30,7 @@ export function Booking() {
   const step = stay ? 'form' : (category ? 'stay' : 'category');
   
   const [formData, setFormData] = useState({
-    name: '', email: '', phone: '', checkIn: '', checkOut: '', guests: '2', stayType: stay || ''
+    name: '', email: '', phone: '', checkIn: '', checkOut: '', guests: '2', stayType: stay || '', guestDetails: '', interested: false
   });
   const [status, setStatus] = useState<'idle'|'loading'|'success'|'error'>('idle');
 
@@ -44,23 +44,24 @@ export function Booking() {
 
       await addDoc(collection(db, 'bookings'), {
         ...formData,
-        stayType: stay, // Use URL stay parameter
+        stayType: stay,
         createdAt: serverTimestamp()
       });
 
       const message = category === 'Event'
-        ? `Hello Woodside Serene! I would like to request a booking for an Event:\n\n*Name:* ${formData.name}\n*Event Name:* ${stay}\n*Event Date:* ${searchParams.get('date') || 'TBD'}\n*Guests:* ${formData.guests}\n*Phone:* ${formData.phone}\n*Email:* ${formData.email}\n\nPlease confirm my event booking.`
-        : `Hello Woodside Serene! I would like to request a stay booking:\n\n*Name:* ${formData.name}\n*Stay Type:* ${stay}\n*Dates:* ${formData.checkIn} to ${formData.checkOut}\n*Guests:* ${formData.guests}\n*Phone:* ${formData.phone}\n*Email:* ${formData.email}\n\nPlease confirm availability and send the 50% advance payment details.`;
+        ? `*New Event Booking*\n\n*Event:* ${stay}\n*Date:* ${searchParams.get('date') || 'TBD'}\n*Guest Name:* ${formData.name}\n*Contact No:* ${formData.phone}\n*No of Guests:* ${formData.guests}\n*Adults & Kids Details:* ${formData.guestDetails}\n*Interested in Participating:* Yes`
+        : `Hello Woodside Serene! I would like to request a stay booking:\n\n*Name:* ${formData.name}\n*Stay Type:* ${stay}\n*Dates:* ${formData.checkIn} to ${formData.checkOut}\n*Guests:* ${formData.guests}\n*Phone:* ${formData.phone}\n*Email:* ${formData.email}\n\nPlease confirm availability.`;
+      
       const whatsappUrl = `https://api.whatsapp.com/send?phone=919840741075&text=${encodeURIComponent(message)}`;
       window.open(whatsappUrl, '_blank');
 
       setStatus('success');
-      setFormData({ name: '', email: '', phone: '', checkIn: '', checkOut: '', guests: '2', stayType: stay || '' });
+      setFormData({ name: '', email: '', phone: '', checkIn: '', checkOut: '', guests: '2', stayType: stay || '', guestDetails: '', interested: false });
       
       setTimeout(() => { 
         setStatus('idle'); 
-        window.location.href = '/booking';
-      }, 5000);
+        window.location.href = category === 'Event' ? '/events' : '/booking';
+      }, 3000);
       
     } catch (error) {
       console.error("Error saving booking: ", error);
@@ -69,8 +70,13 @@ export function Booking() {
     }
   };
 
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
-    setFormData(prev => ({ ...prev, [e.target.name]: e.target.value }));
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>) => {
+    const { name, value, type } = e.target;
+    if (type === 'checkbox') {
+      setFormData(prev => ({ ...prev, [name]: (e.target as HTMLInputElement).checked }));
+    } else {
+      setFormData(prev => ({ ...prev, [name]: value }));
+    }
   };
 
   return (
@@ -79,11 +85,12 @@ export function Booking() {
       <div className="container mx-auto px-4 md:px-12 relative z-10">
         
         <div className="text-center mb-12">
-          <h2 className="text-4xl md:text-5xl font-serif text-white mb-4 drop-shadow-lg">Book Your Stay</h2>
+          <h2 className="text-4xl md:text-5xl font-serif text-white mb-4 drop-shadow-lg">{category === 'Event' ? 'Event Registration' : 'Book Your Stay'}</h2>
           <p className="text-woodside-200 max-w-2xl mx-auto drop-shadow-md">
             {step === 'category' && "Select your preferred style of stay."}
             {step === 'stay' && `Choose your perfect ${category}.`}
-            {step === 'form' && "Complete your booking request below."}
+            {step === 'form' && category === 'Event' && "Please provide your details below to register for the event."}
+            {step === 'form' && category !== 'Event' && "Complete your booking request below."}
           </p>
         </div>
 
@@ -155,47 +162,70 @@ export function Booking() {
               </Link>
               
               <div className="bg-woodside-950/80 backdrop-blur-xl rounded-3xl p-6 md:p-10 border border-white/10 shadow-2xl max-w-2xl mx-auto">
-                <h3 className="text-2xl font-serif text-white mb-6 border-b border-white/10 pb-4">Booking: <span className="text-woodside-300">{stay}</span></h3>
+                <h3 className="text-2xl font-serif text-white mb-6 border-b border-white/10 pb-4">{category === 'Event' ? 'Register for Event:' : 'Booking:'} <span className="text-woodside-300">{stay}</span></h3>
                 <form onSubmit={handleSubmit} className="space-y-4">
-                  <div>
-                    <label className="block text-xs font-bold tracking-wider text-woodside-300 uppercase mb-1">Name</label>
-                    <input required type="text" name="name" value={formData.name} onChange={handleChange} className="w-full px-4 py-3 rounded-xl bg-woodside-950/50 border border-white/10 text-white focus:outline-none focus:border-woodside-500 focus:ring-1 focus:ring-woodside-500 placeholder-white/30" placeholder="John Doe" />
-                  </div>
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                    <div>
-                      <label className="block text-xs font-bold tracking-wider text-woodside-300 uppercase mb-1">Email</label>
-                      <input required type="email" name="email" value={formData.email} onChange={handleChange} className="w-full px-4 py-3 rounded-xl bg-woodside-950/50 border border-white/10 text-white focus:outline-none focus:border-woodside-500 focus:ring-1 focus:ring-woodside-500 placeholder-white/30" placeholder="john@example.com" />
-                    </div>
-                    <div>
-                      <label className="block text-xs font-bold tracking-wider text-woodside-300 uppercase mb-1">Phone</label>
-                      <input required type="tel" name="phone" value={formData.phone} onChange={handleChange} className="w-full px-4 py-3 rounded-xl bg-woodside-950/50 border border-white/10 text-white focus:outline-none focus:border-woodside-500 focus:ring-1 focus:ring-woodside-500 placeholder-white/30" placeholder="+91 98765 43210" />
-                    </div>
-                  </div>
-                  {category !== 'Event' ? (
-                    <div className="grid grid-cols-2 gap-4">
+                  {category === 'Event' ? (
+                    <div className="space-y-4">
                       <div>
-                        <label className="block text-xs font-bold tracking-wider text-woodside-300 uppercase mb-1">Check-in</label>
-                        <input required type="date" name="checkIn" value={formData.checkIn} onChange={handleChange} className="w-full px-4 py-3 rounded-xl bg-woodside-950/50 border border-white/10 text-white focus:outline-none focus:border-woodside-500 focus:ring-1 focus:ring-woodside-500 [color-scheme:dark]" />
+                        <label className="block text-xs font-bold tracking-wider text-woodside-300 uppercase mb-1">Guest Name</label>
+                        <input required type="text" name="name" value={formData.name} onChange={handleChange} className="w-full px-4 py-3 rounded-xl bg-woodside-950/50 border border-white/10 text-white focus:outline-none focus:border-woodside-500 focus:ring-1 focus:ring-woodside-500 placeholder-white/30" placeholder="Your Name" />
                       </div>
                       <div>
-                        <label className="block text-xs font-bold tracking-wider text-woodside-300 uppercase mb-1">Check-out</label>
-                        <input required type="date" name="checkOut" value={formData.checkOut} onChange={handleChange} className="w-full px-4 py-3 rounded-xl bg-woodside-950/50 border border-white/10 text-white focus:outline-none focus:border-woodside-500 focus:ring-1 focus:ring-woodside-500 [color-scheme:dark]" />
+                        <label className="block text-xs font-bold tracking-wider text-woodside-300 uppercase mb-1">Guest Contact No</label>
+                        <input required type="tel" name="phone" value={formData.phone} onChange={handleChange} className="w-full px-4 py-3 rounded-xl bg-woodside-950/50 border border-white/10 text-white focus:outline-none focus:border-woodside-500 focus:ring-1 focus:ring-woodside-500 placeholder-white/30" placeholder="+91 98765 43210" />
+                      </div>
+                      <div>
+                        <label className="block text-xs font-bold tracking-wider text-woodside-300 uppercase mb-1">No of Guests</label>
+                        <input required type="number" min="1" name="guests" value={formData.guests} onChange={handleChange} className="w-full px-4 py-3 rounded-xl bg-woodside-950/50 border border-white/10 text-white focus:outline-none focus:border-woodside-500 focus:ring-1 focus:ring-woodside-500 placeholder-white/30" placeholder="2" />
+                      </div>
+                      <div>
+                        <label className="block text-xs font-bold tracking-wider text-woodside-300 uppercase mb-1">Please mention Adults and kids below 12 years</label>
+                        <textarea required name="guestDetails" value={formData.guestDetails} onChange={handleChange} className="w-full px-4 py-3 rounded-xl bg-woodside-950/50 border border-white/10 text-white focus:outline-none focus:border-woodside-500 focus:ring-1 focus:ring-woodside-500 placeholder-white/30 resize-none h-24" placeholder="e.g. 2 Adults, 1 Kid (8 years)"></textarea>
+                      </div>
+                      <div className="flex items-center gap-3 mt-4 bg-woodside-900/30 p-4 rounded-xl border border-white/5 cursor-pointer" onClick={() => setFormData(p => ({...p, interested: !p.interested}))}>
+                        <div className={`w-5 h-5 rounded-md flex items-center justify-center border transition-colors ${formData.interested ? 'bg-woodside-500 border-woodside-500' : 'border-white/20'}`}>
+                           {formData.interested && <svg className="w-3 h-3 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d="M5 13l4 4L19 7" /></svg>}
+                        </div>
+                        <label className="text-sm text-woodside-200 cursor-pointer pointer-events-none">We are interested in participating in this event.</label>
                       </div>
                     </div>
                   ) : (
-                    <div>
-                      <label className="block text-xs font-bold tracking-wider text-woodside-300 uppercase mb-1">Event Date</label>
-                      <input type="text" readOnly value={searchParams.get('date') || ''} className="w-full px-4 py-3 rounded-xl bg-woodside-950/30 border border-white/5 text-white/50 cursor-not-allowed" />
+                    <div className="space-y-4">
+                      <div>
+                        <label className="block text-xs font-bold tracking-wider text-woodside-300 uppercase mb-1">Name</label>
+                        <input required type="text" name="name" value={formData.name} onChange={handleChange} className="w-full px-4 py-3 rounded-xl bg-woodside-950/50 border border-white/10 text-white focus:outline-none focus:border-woodside-500 focus:ring-1 focus:ring-woodside-500 placeholder-white/30" placeholder="John Doe" />
+                      </div>
+                      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <div>
+                          <label className="block text-xs font-bold tracking-wider text-woodside-300 uppercase mb-1">Email</label>
+                          <input required type="email" name="email" value={formData.email} onChange={handleChange} className="w-full px-4 py-3 rounded-xl bg-woodside-950/50 border border-white/10 text-white focus:outline-none focus:border-woodside-500 focus:ring-1 focus:ring-woodside-500 placeholder-white/30" placeholder="john@example.com" />
+                        </div>
+                        <div>
+                          <label className="block text-xs font-bold tracking-wider text-woodside-300 uppercase mb-1">Phone</label>
+                          <input required type="tel" name="phone" value={formData.phone} onChange={handleChange} className="w-full px-4 py-3 rounded-xl bg-woodside-950/50 border border-white/10 text-white focus:outline-none focus:border-woodside-500 focus:ring-1 focus:ring-woodside-500 placeholder-white/30" placeholder="+91 98765 43210" />
+                        </div>
+                      </div>
+                      <div className="grid grid-cols-2 gap-4">
+                        <div>
+                          <label className="block text-xs font-bold tracking-wider text-woodside-300 uppercase mb-1">Check-in</label>
+                          <input required type="date" name="checkIn" value={formData.checkIn} onChange={handleChange} className="w-full px-4 py-3 rounded-xl bg-woodside-950/50 border border-white/10 text-white focus:outline-none focus:border-woodside-500 focus:ring-1 focus:ring-woodside-500 [color-scheme:dark]" />
+                        </div>
+                        <div>
+                          <label className="block text-xs font-bold tracking-wider text-woodside-300 uppercase mb-1">Check-out</label>
+                          <input required type="date" name="checkOut" value={formData.checkOut} onChange={handleChange} className="w-full px-4 py-3 rounded-xl bg-woodside-950/50 border border-white/10 text-white focus:outline-none focus:border-woodside-500 focus:ring-1 focus:ring-woodside-500 [color-scheme:dark]" />
+                        </div>
+                      </div>
+                      <div>
+                        <label className="block text-xs font-bold tracking-wider text-woodside-300 uppercase mb-1">Guests</label>
+                        <select name="guests" value={formData.guests} onChange={handleChange} className="w-full px-4 py-3 rounded-xl bg-woodside-950/50 border border-white/10 text-white focus:outline-none focus:border-woodside-500 focus:ring-1 focus:ring-woodside-500">
+                          <option>1 Guest</option><option>2 Guests</option><option>3 Guests</option><option>4+ Guests</option>
+                        </select>
+                      </div>
                     </div>
                   )}
-                  <div>
-                    <label className="block text-xs font-bold tracking-wider text-woodside-300 uppercase mb-1">Guests</label>
-                    <select name="guests" value={formData.guests} onChange={handleChange} className="w-full px-4 py-3 rounded-xl bg-woodside-950/50 border border-white/10 text-white focus:outline-none focus:border-woodside-500 focus:ring-1 focus:ring-woodside-500">
-                      <option>1 Guest</option><option>2 Guests</option><option>3 Guests</option><option>4+ Guests</option>
-                    </select>
-                  </div>
-                  <button type="submit" className="w-full bg-white text-woodside-950 hover:bg-gray-100 font-bold py-4 rounded-xl mt-6 transition-colors shadow-lg shadow-white/10 active:scale-[0.98]">
-                    {status === 'loading' ? 'Sending Request...' : 'Send WhatsApp Request'}
+
+                  <button disabled={status === 'loading'} type="submit" className="w-full bg-white text-woodside-950 hover:bg-gray-100 font-bold py-4 rounded-xl mt-6 transition-colors shadow-lg shadow-white/10 active:scale-[0.98] disabled:opacity-70 disabled:cursor-not-allowed">
+                    {status === 'loading' ? 'Sending...' : (category === 'Event' ? 'Register via WhatsApp' : 'Send WhatsApp Request')}
                   </button>
                 </form>
               </div>

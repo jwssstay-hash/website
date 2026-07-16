@@ -21,6 +21,7 @@ export default function AdminPage() {
 
   // Data states
   const [bookings, setBookings] = useState<any[]>([]);
+  const [selectedBookings, setSelectedBookings] = useState<Set<string>>(new Set());
   const [events, setEvents] = useState<any[]>([]);
   const [gallery, setGallery] = useState<any[]>([]);
   const [stories, setStories] = useState<any[]>([]);
@@ -30,6 +31,7 @@ export default function AdminPage() {
   const [eventForm, setEventForm] = useState({ image: '', date: '', description: '', posterPlace: '', contact: '' });
   const [isSubmittingEvent, setIsSubmittingEvent] = useState(false);
   const [isUploadingEventImage, setIsUploadingEventImage] = useState(false);
+  const [editingEventId, setEditingEventId] = useState<string | null>(null);
 
   const [storyForm, setStoryForm] = useState({ name: '', rating: 5, text: '' });
   const [isSubmittingStory, setIsSubmittingStory] = useState(false);
@@ -83,10 +85,51 @@ export default function AdminPage() {
       const q = query(collection(db, 'bookings'), orderBy('createdAt', 'desc'));
       const snapshot = await getDocs(q);
       setBookings(snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() })));
+      setSelectedBookings(new Set());
     } catch (error) {
       console.error("Error fetching bookings", error);
     }
     setIsLoading(false);
+  };
+
+  const deleteSelectedBookings = async () => {
+    if (selectedBookings.size === 0) return;
+    if (!confirm(`Are you sure you want to delete ${selectedBookings.size} booking(s)?`)) return;
+    
+    setIsLoading(true);
+    try {
+      const { db } = await import('@/lib/firebase');
+      const { deleteDoc, doc } = await import('firebase/firestore');
+      
+      const deletePromises = Array.from(selectedBookings).map(id => deleteDoc(doc(db, 'bookings', id)));
+      await Promise.all(deletePromises);
+      
+      fetchBookings();
+    } catch (error) {
+      console.error("Error deleting bookings", error);
+      alert('Failed to delete bookings');
+      setIsLoading(false);
+    }
+  };
+
+  const deleteAllBookings = async () => {
+    if (bookings.length === 0) return;
+    if (!confirm('WARNING: Are you sure you want to delete ALL bookings? This cannot be undone.')) return;
+    
+    setIsLoading(true);
+    try {
+      const { db } = await import('@/lib/firebase');
+      const { deleteDoc, doc } = await import('firebase/firestore');
+      
+      const deletePromises = bookings.map(b => deleteDoc(doc(db, 'bookings', b.id)));
+      await Promise.all(deletePromises);
+      
+      fetchBookings();
+    } catch (error) {
+      console.error("Error deleting all bookings", error);
+      alert('Failed to delete all bookings');
+      setIsLoading(false);
+    }
   };
 
   const fetchEvents = async () => {
@@ -198,14 +241,21 @@ export default function AdminPage() {
     setIsSubmittingEvent(true);
     try {
       const { db } = await import('@/lib/firebase');
-      const { collection, addDoc, serverTimestamp } = await import('firebase/firestore');
-      await addDoc(collection(db, 'events'), { ...eventForm, createdAt: serverTimestamp() });
-      alert('Event added successfully!');
+      const { collection, addDoc, doc, updateDoc, serverTimestamp } = await import('firebase/firestore');
+      
+      if (editingEventId) {
+        await updateDoc(doc(db, 'events', editingEventId), { ...eventForm });
+        alert('Event updated successfully!');
+      } else {
+        await addDoc(collection(db, 'events'), { ...eventForm, createdAt: serverTimestamp() });
+        alert('Event added successfully!');
+      }
       setEventForm({ image: '', date: '', description: '', posterPlace: '', contact: '' });
+      setEditingEventId(null);
       fetchEvents();
     } catch (error) {
-      console.error("Error adding event", error);
-      alert('Failed to add event');
+      console.error("Error saving event", error);
+      alert('Failed to save event');
     }
     setIsSubmittingEvent(false);
   };
@@ -337,7 +387,19 @@ export default function AdminPage() {
                   <h2 className="text-3xl font-serif mb-2">Booking Requests</h2>
                   <p className="text-white/70 text-sm">View all inquiries submitted through the website.</p>
                 </div>
-                <button onClick={fetchBookings} className="text-sm bg-white/10 hover:bg-white/20 px-4 py-2 rounded-lg transition-colors">Refresh</button>
+                <div className="flex gap-2">
+                  {selectedBookings.size > 0 && (
+                    <button onClick={deleteSelectedBookings} className="text-sm bg-red-500/20 text-red-400 hover:bg-red-500 hover:text-white px-4 py-2 rounded-lg transition-colors flex items-center gap-2">
+                      <Trash2 className="w-4 h-4" /> Delete Selected ({selectedBookings.size})
+                    </button>
+                  )}
+                  {bookings.length > 0 && (
+                    <button onClick={deleteAllBookings} className="text-sm bg-red-500/10 text-red-400 hover:bg-red-500 hover:text-white px-4 py-2 rounded-lg transition-colors flex items-center gap-2">
+                      <Trash2 className="w-4 h-4" /> Delete All
+                    </button>
+                  )}
+                  <button onClick={fetchBookings} className="text-sm bg-white/10 hover:bg-white/20 px-4 py-2 rounded-lg transition-colors">Refresh</button>
+                </div>
               </div>
 
               {isLoading ? (
@@ -349,6 +411,20 @@ export default function AdminPage() {
                   <table className="w-full text-left text-sm whitespace-nowrap">
                     <thead className="bg-woodside-800/50 uppercase tracking-wider text-xs text-white/70">
                       <tr>
+                        <th className="px-6 py-4">
+                          <input 
+                            type="checkbox" 
+                            checked={bookings.length > 0 && selectedBookings.size === bookings.length}
+                            onChange={(e) => {
+                              if (e.target.checked) {
+                                setSelectedBookings(new Set(bookings.map(b => b.id)));
+                              } else {
+                                setSelectedBookings(new Set());
+                              }
+                            }}
+                            className="rounded border-white/10 bg-woodside-950/50 text-woodside-500 focus:ring-woodside-500 cursor-pointer"
+                          />
+                        </th>
                         <th className="px-6 py-4 font-medium">Date Created</th>
                         <th className="px-6 py-4 font-medium">Name</th>
                         <th className="px-6 py-4 font-medium">Stay Type</th>
@@ -359,13 +435,30 @@ export default function AdminPage() {
                     </thead>
                     <tbody className="divide-y divide-white/5">
                       {bookings.map(b => (
-                        <tr key={b.id} className="hover:bg-white/5 transition-colors">
+                        <tr key={b.id} className={`hover:bg-white/5 transition-colors ${selectedBookings.has(b.id) ? 'bg-white/5' : ''}`}>
+                          <td className="px-6 py-4">
+                            <input 
+                              type="checkbox" 
+                              checked={selectedBookings.has(b.id)}
+                              onChange={(e) => {
+                                const newSet = new Set(selectedBookings);
+                                if (e.target.checked) newSet.add(b.id);
+                                else newSet.delete(b.id);
+                                setSelectedBookings(newSet);
+                              }}
+                              className="rounded border-white/10 bg-woodside-950/50 text-woodside-500 focus:ring-woodside-500 cursor-pointer"
+                            />
+                          </td>
                           <td className="px-6 py-4 text-white/70">{b.createdAt?.toDate ? b.createdAt.toDate().toLocaleDateString() : 'Just now'}</td>
                           <td className="px-6 py-4 font-medium text-white">{b.name}</td>
                           <td className="px-6 py-4"><span className="bg-woodside-800 px-3 py-1 rounded-full text-xs border border-white/10">{b.stayType}</span></td>
-                          <td className="px-6 py-4 text-woodside-200">{b.checkIn} to {b.checkOut}</td>
-                          <td className="px-6 py-4">{b.guests}</td>
-                          <td className="px-6 py-4 text-white/70"><div>{b.phone}</div><div className="text-xs text-white/50">{b.email}</div></td>
+                          <td className="px-6 py-4 text-woodside-200">{b.checkIn ? `${b.checkIn} to ${b.checkOut}` : <span className="text-woodside-400 text-xs uppercase tracking-wider font-bold">Event Registration</span>}</td>
+                          <td className="px-6 py-4">
+                            <div>{b.guests}</div>
+                            {b.guestDetails && <div className="text-xs text-woodside-400 mt-1 max-w-[200px] whitespace-normal leading-tight">{b.guestDetails}</div>}
+                            {b.interested && <div className="text-xs text-green-400 mt-1 font-medium">✓ Participating</div>}
+                          </td>
+                          <td className="px-6 py-4 text-white/70"><div>{b.phone}</div><div className="text-xs text-white/50">{b.email || 'No email provided'}</div></td>
                         </tr>
                       ))}
                     </tbody>
@@ -384,7 +477,7 @@ export default function AdminPage() {
               <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
                 <div className="lg:col-span-1">
                   <form onSubmit={submitEvent} className="bg-woodside-900/30 border border-white/5 rounded-2xl p-6 space-y-4 sticky top-10">
-                    <h3 className="font-serif text-xl border-b border-white/5 pb-4 mb-4">Add New Event</h3>
+                    <h3 className="font-serif text-xl border-b border-white/5 pb-4 mb-4">{editingEventId ? 'Edit Event' : 'Add New Event'}</h3>
                     
                     <div>
                       <label className="block text-xs uppercase tracking-widest text-white/70 mb-2">Event Image</label>
@@ -409,11 +502,15 @@ export default function AdminPage() {
                     <div><label className="block text-xs uppercase tracking-widest text-white/70 mb-1">Event Date</label><input type="text" placeholder="e.g. 24th Dec, 2026" value={eventForm.date} onChange={e => setEventForm(prev => ({...prev, date: e.target.value}))} className="w-full bg-woodside-950/50 border border-white/10 rounded-xl px-4 py-2.5 text-sm text-white placeholder-white/30 focus:outline-none focus:border-woodside-500" /></div>
                     <div><label className="block text-xs uppercase tracking-widest text-white/70 mb-1">Description</label><textarea placeholder="Event details..." rows={3} value={eventForm.description} onChange={e => setEventForm(prev => ({...prev, description: e.target.value}))} className="w-full bg-woodside-950/50 border border-white/10 rounded-xl px-4 py-2.5 text-sm text-white placeholder-white/30 focus:outline-none focus:border-woodside-500 resize-none"></textarea></div>
                     <div><label className="block text-xs uppercase tracking-widest text-white/70 mb-1">Poster / Place</label><input type="text" placeholder="e.g. Woodside Serene Farm" value={eventForm.posterPlace} onChange={e => setEventForm(prev => ({...prev, posterPlace: e.target.value}))} className="w-full bg-woodside-950/50 border border-white/10 rounded-xl px-4 py-2.5 text-sm text-white placeholder-white/30 focus:outline-none focus:border-woodside-500" /></div>
-                    <div><label className="block text-xs uppercase tracking-widest text-white/70 mb-1">Contact</label><input type="text" placeholder="e.g. +91 98407 41075" value={eventForm.contact} onChange={e => setEventForm(prev => ({...prev, contact: e.target.value}))} className="w-full bg-woodside-950/50 border border-white/10 rounded-xl px-4 py-2.5 text-sm text-white placeholder-white/30 focus:outline-none focus:border-woodside-500" /></div>
 
                     <button disabled={isSubmittingEvent} type="submit" className="w-full bg-white text-woodside-950 font-bold py-3 rounded-xl hover:bg-woodside-100 transition-colors flex items-center justify-center disabled:opacity-50 mt-4">
-                      {isSubmittingEvent ? <Loader2 className="w-5 h-5 animate-spin" /> : 'Publish Event'}
+                      {isSubmittingEvent ? <Loader2 className="w-5 h-5 animate-spin" /> : (editingEventId ? 'Update Event' : 'Publish Event')}
                     </button>
+                    {editingEventId && (
+                      <button type="button" onClick={() => { setEventForm({ image: '', date: '', description: '', posterPlace: '', contact: '' }); setEditingEventId(null); }} className="w-full bg-woodside-800 text-white font-bold py-3 rounded-xl hover:bg-woodside-700 transition-colors mt-2 text-sm">
+                        Cancel Edit
+                      </button>
+                    )}
                   </form>
                 </div>
 
@@ -426,7 +523,13 @@ export default function AdminPage() {
                           <div key={event.id} className="flex flex-col sm:flex-row gap-4 bg-woodside-950/50 p-4 rounded-xl border border-white/5">
                             {event.image ? <img src={event.image} alt="Event" className="w-full sm:w-32 h-24 object-cover rounded-lg" /> : <div className="w-full sm:w-32 h-24 bg-woodside-800 rounded-lg flex items-center justify-center text-white/50"><ImagePlus className="w-6 h-6" /></div>}
                             <div className="flex-1">
-                              <div className="flex justify-between items-start"><h4 className="font-bold text-white mb-1">{event.date || 'No Date'}</h4><button onClick={() => deleteDocItem('events', event.id, fetchEvents)} className="text-red-400 hover:text-red-300 p-1 bg-red-400/10 rounded-lg transition-colors"><Trash2 className="w-4 h-4" /></button></div>
+                              <div className="flex justify-between items-start">
+                                <h4 className="font-bold text-white mb-1">{event.date || 'No Date'}</h4>
+                                <div className="flex gap-2">
+                                  <button onClick={() => { setEventForm({ image: event.image || '', date: event.date || '', description: event.description || '', posterPlace: event.posterPlace || '', contact: event.contact || '' }); setEditingEventId(event.id); window.scrollTo(0, 0); }} className="text-blue-400 hover:text-blue-300 p-1.5 bg-blue-400/10 rounded-lg transition-colors"><Edit2 className="w-4 h-4" /></button>
+                                  <button onClick={() => deleteDocItem('events', event.id, fetchEvents)} className="text-red-400 hover:text-red-300 p-1.5 bg-red-400/10 rounded-lg transition-colors"><Trash2 className="w-4 h-4" /></button>
+                                </div>
+                              </div>
                               <p className="text-sm text-white/70 mb-2 line-clamp-2">{event.description || 'No description'}</p>
                               <div className="flex gap-4 text-xs text-white/50">{event.posterPlace && <span>📍 {event.posterPlace}</span>}{event.contact && <span>📞 {event.contact}</span>}</div>
                             </div>

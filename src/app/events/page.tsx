@@ -65,9 +65,8 @@ export default function EventsPage() {
             {events.map((event, index) => (
               <div key={event.id} className="bg-woodside-900/60 backdrop-blur-xl border border-white/10 rounded-3xl overflow-hidden shadow-2xl flex flex-col group hover:bg-woodside-900/80 transition-all hover:-translate-y-2 duration-500" style={{ animationDelay: `${index * 100}ms` }}>
                 {event.image ? (
-                  <div className="relative h-64 overflow-hidden">
-                    <img src={event.image} alt="Event Poster" className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700" />
-                    <div className="absolute inset-0 bg-gradient-to-t from-woodside-950 to-transparent opacity-80" />
+                  <div className="relative w-full bg-woodside-950 border-b border-white/5 overflow-hidden">
+                    <img src={event.image} alt="Event Poster" className="w-full h-auto max-h-[600px] object-contain group-hover:scale-[1.02] transition-transform duration-700" />
                   </div>
                 ) : (
                   <div className="h-48 bg-woodside-800 flex items-center justify-center relative overflow-hidden">

@@ -1,12 +1,14 @@
 @import "tailwindcss";
 
 @theme {
-  --color-woodside-50: #85AB8B;
-  --color-woodside-300: #4b5b47;
-  --color-woodside-600: #336443;
-  --color-woodside-800: #2d3a2a;
-  --color-woodside-900: #2a3827;
-  --color-woodside-950: #1f2a1d;
+  --color-woodside-50: #cee7cc;
+  --color-woodside-200: #569d66;
+  --color-woodside-300: #569d66;
+  --color-woodside-400: #297b3d;
+  --color-woodside-600: #17562b;
+  --color-woodside-800: #174621;
+  --color-woodside-900: #050e1e;
+  --color-woodside-950: #050e1e;
   
   --font-sans: 'Neue Haas Grotesk Text Pro', 'Helvetica Neue', Helvetica, Arial, sans-serif;
   --font-serif: 'Neue Haas Grotesk Display Pro 55 Roman', serif;

@@ -4,25 +4,25 @@ import { MapPin } from 'lucide-react';
 const attractions = [
   {
     name: "Kolappan Lake",
-    distance: "15 Mins",
+    distance: "15.5 km | 18 Min",
     image: "/Images/Attractions/lake.png",
     desc: "A serene boating lake surrounded by misty hills."
   },
   {
     name: "Bheeman Falls",
-    distance: "25 Mins",
+    distance: "14.2 km | 18 Min",
     image: "/Images/Attractions/falls.png",
     desc: "A breathtaking waterfall hidden deep within the forest."
   },
   {
     name: "Vainu Bappu Observatory",
-    distance: "35 Mins",
+    distance: "2.9 km | 6 Min",
     image: "/Images/Attractions/observatory.png",
     desc: "Asia's largest telescope observatory. Perfect for stargazing."
   },
   {
     name: "Andiappanur Dam",
-    distance: "1 Hr 15 Mins",
+    distance: "27.7 km | 32 Min",
     image: "/Images/Attractions/dam.png",
     desc: "A picturesque dam offering stunning views at the foothills."
   }
