@@ -6,24 +6,13 @@ interface LogoProps {
 }
 
 export function Logo({ className = '', variant = 'light' }: LogoProps) {
-  const isLight = variant === 'light';
-  const textColor = isLight ? 'text-white' : 'text-woodside-950';
-  const accentColor = isLight ? 'text-woodside-200' : 'text-woodside-600';
-
   return (
-    <div className={`flex flex-col items-center justify-center ${className}`}>
-      <div className="flex flex-col items-center">
-        <span className={`font-serif font-bold tracking-[0.25em] uppercase text-xl md:text-2xl leading-none ${textColor}`}>
-          Woodside
-        </span>
-        <div className="flex items-center gap-2 mt-2 w-full px-1">
-          <div className={`h-[1px] flex-1 ${isLight ? 'bg-woodside-200/50' : 'bg-woodside-600/50'}`} />
-          <span className={`font-sans tracking-[0.4em] uppercase text-[0.6rem] md:text-[0.7rem] leading-none ${accentColor}`}>
-            Serene
-          </span>
-          <div className={`h-[1px] flex-1 ${isLight ? 'bg-woodside-200/50' : 'bg-woodside-600/50'}`} />
-        </div>
-      </div>
+    <div className={`relative flex items-center justify-center w-24 md:w-32 ${className}`}>
+      <img 
+        src="/logo.png" 
+        alt="Woodside Serene" 
+        className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[120px] md:w-[160px] max-w-none object-contain drop-shadow-md pointer-events-none"
+      />
     </div>
   );
 }
