@@ -1,14 +1,9 @@
 'use client';
 
-import React, { useEffect, useState } from 'react';
-import { ZoomIn, Loader2 } from 'lucide-react';
-import { VideoBackground } from '../ui/VideoBackground';
+import React, { useState } from 'react';
+import { Loader2 } from 'lucide-react';
 
-const defaultGalleryImages = [
-  
-
-
-
+const imagesToMigrate = [
   { src: "/Images/Glass Room/glass-house-group-stay-54.jpeg", title: "Glass Room", colSpan: "col-span-1", rowSpan: "row-span-1" },
   { src: "/Images/General Farm Photos/general-farm-photos-39.jpeg", title: "General Farm Photos", colSpan: "col-span-1", rowSpan: "row-span-1" },
   { src: "/Images/Cottage Rooms/cottage-rooms-10.jpeg", title: "Cottage Rooms", colSpan: "col-span-1", rowSpan: "row-span-2" },
@@ -54,82 +49,106 @@ const defaultGalleryImages = [
   { src: "/Images/Glass Room/glass-house-group-stay-44.jpeg", title: "Glass Room", colSpan: "col-span-1", rowSpan: "row-span-1" },
   { src: "/Images/Glass Room/glass-house-group-stay-46.jpeg", title: "Glass Room", colSpan: "col-span-1 md:col-span-2", rowSpan: "row-span-1" },
   { src: "/Images/Camp/events-and-camp-14.jpeg", title: "Camp", colSpan: "col-span-1", rowSpan: "row-span-2" },
-  { src: "/Images/Family tent/Main.jpeg", title: "Family Tent", colSpan: "col-span-1 md:col-span-2", rowSpan: "row-span-2" },
-
-
-
-
+  { src: "/Images/Family tent/Main.jpeg", title: "Family Tent", colSpan: "col-span-1 md:col-span-2", rowSpan: "row-span-2" }
 ];
 
-export function Gallery() {
-  const [galleryImages, setGalleryImages] = useState<any[]>(defaultGalleryImages);
-  const [isLoading, setIsLoading] = useState(true);
+export default function MigratePage() {
+  const [isMigrating, setIsMigrating] = useState(false);
+  const [progress, setProgress] = useState(0);
+  const [status, setStatus] = useState('');
 
-  useEffect(() => {
-    const fetchCustomGallery = async () => {
-      try {
-        const { db } = await import('@/lib/firebase');
-        const { collection, query, orderBy, getDocs } = await import('firebase/firestore');
+  const startMigration = async () => {
+    setIsMigrating(true);
+    setStatus('Initializing Firebase...');
+    
+    try {
+      const { db } = await import('@/lib/firebase');
+      const { collection, addDoc, serverTimestamp } = await import('firebase/firestore');
 
-        const q = query(collection(db, 'gallery'), orderBy('createdAt', 'desc'));
-        const snapshot = await getDocs(q);
-        const customImages = snapshot.docs.map(doc => ({
-          src: doc.data().src,
-          title: doc.data().title || 'Gallery Image',
-          colSpan: doc.data().colSpan || 'col-span-1',
-          rowSpan: doc.data().rowSpan || 'row-span-1'
-        }));
+      for (let i = 0; i < imagesToMigrate.length; i++) {
+        const img = imagesToMigrate[i];
+        setStatus(`Uploading ${i + 1} of ${imagesToMigrate.length}...`);
         
-        // Prepend new custom images to the hardcoded default ones
-        setGalleryImages([...defaultGalleryImages, ...customImages]);
-      } catch (error) {
-        console.error("Error fetching custom gallery images", error);
-      }
-      setIsLoading(false);
-    };
+        // 1. Fetch the local file as a Blob
+        const response = await fetch(img.src);
+        if (!response.ok) {
+          console.warn(`Skipping ${img.src} - not found locally.`);
+          continue;
+        }
+        const blob = await response.blob();
+        const file = new File([blob], 'image.jpeg', { type: blob.type });
 
-    fetchCustomGallery();
-  }, []);
+        // 2. Upload to Cloudinary
+        const formData = new FormData();
+        formData.append('file', file);
+        formData.append('upload_preset', 'woodside_events');
+
+        const uploadRes = await fetch(`https://api.cloudinary.com/v1_1/bali5bin/image/upload`, {
+          method: 'POST',
+          body: formData,
+        });
+        const uploadData = await uploadRes.json();
+        
+        if (uploadData.secure_url) {
+          // 3. Save to Firestore
+          await addDoc(collection(db, 'gallery'), {
+            src: uploadData.secure_url,
+            title: img.title || 'Gallery Image',
+            colSpan: img.colSpan || 'col-span-1',
+            rowSpan: img.rowSpan || 'row-span-1',
+            createdAt: serverTimestamp()
+          });
+        } else {
+          console.error(`Failed to upload ${img.src}`, uploadData);
+        }
+
+        setProgress(Math.round(((i + 1) / imagesToMigrate.length) * 100));
+      }
+
+      setStatus('Migration Complete! You can now safely remove the default images from Gallery.tsx');
+    } catch (error: any) {
+      console.error('Migration failed:', error);
+      setStatus(`Error: ${error.message}`);
+    }
+    
+    setIsMigrating(false);
+  };
 
   return (
-    <section id="gallery" className="relative w-full pt-10 min-h-screen pb-24">
-      <VideoBackground />
-      <div className="container mx-auto px-6 md:px-12 relative z-10">
-        <div className="text-center mb-16">
-          <h2 className="text-4xl md:text-5xl font-serif text-white mb-4 drop-shadow-lg">
-            Gallery
-          </h2>
-          <p className="text-woodside-200 font-sans tracking-widest uppercase text-sm drop-shadow-md">
-            Moments at Woodside Serene
-          </p>
-        </div>
+    <div className="min-h-screen bg-woodside-950 flex flex-col items-center justify-center text-white p-8">
+      <div className="max-w-xl w-full bg-woodside-900/50 p-8 rounded-2xl border border-white/10 text-center">
+        <h1 className="text-3xl font-serif mb-4">Gallery Migration Tool</h1>
+        <p className="text-white/70 mb-8 text-sm">
+          This tool will safely transfer your {imagesToMigrate.length} local images to Cloudinary and Firebase so they can be managed from the Admin Panel.
+        </p>
 
-        {isLoading ? (
-          <div className="flex justify-center p-12">
-            <Loader2 className="w-12 h-12 text-woodside-300 animate-spin" />
-          </div>
-        ) : (
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-2 md:gap-4 auto-rows-[150px] md:auto-rows-[200px]">
-            {galleryImages.map((img, idx) => (
-              <div
-                key={idx}
-                className={`relative group rounded-xl overflow-hidden cursor-pointer shadow-lg transition-transform duration-500 hover:scale-[1.02] ${img.colSpan} ${img.rowSpan}`}
-              >
-                <img 
-                  src={img.src} 
-                  alt={img.title}
-                  loading="lazy"
-                  className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110"
-                />
-                <div className="absolute inset-0 bg-woodside-950/40 opacity-0 group-hover:opacity-100 backdrop-blur-[2px] transition-all duration-500 flex flex-col items-center justify-center">
-                  <ZoomIn className="text-white mb-2" size={32} />
-                  <span className="text-white font-serif text-lg tracking-wide text-center px-4">{img.title}</span>
-                </div>
-              </div>
-            ))}
+        {progress > 0 && (
+          <div className="w-full bg-woodside-950 rounded-full h-4 mb-4 overflow-hidden border border-white/10">
+            <div 
+              className="bg-green-500 h-4 transition-all duration-300"
+              style={{ width: `${progress}%` }}
+            ></div>
           </div>
         )}
+
+        <div className="text-sm text-woodside-200 mb-8 min-h-6">
+          {status}
+        </div>
+
+        <button 
+          onClick={startMigration}
+          disabled={isMigrating || progress === 100}
+          className="bg-white text-woodside-950 font-bold px-8 py-3 rounded-xl hover:bg-woodside-100 disabled:opacity-50 transition-colors flex items-center justify-center w-full"
+        >
+          {isMigrating ? (
+            <><Loader2 className="w-5 h-5 mr-2 animate-spin" /> Migrating...</>
+          ) : progress === 100 ? (
+            'Migration Finished'
+          ) : (
+            'Start Migration Now'
+          )}
+        </button>
       </div>
-    </section>
+    </div>
   );
 }
